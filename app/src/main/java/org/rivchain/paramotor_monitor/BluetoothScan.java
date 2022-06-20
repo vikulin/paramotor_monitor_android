@@ -1,7 +1,6 @@
 package org.rivchain.paramotor_monitor;
 
 
-import android.Manifest;
 import android.annotation.SuppressLint;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
@@ -9,9 +8,6 @@ import android.bluetooth.BluetoothManager;
 import android.content.Context;
 import android.content.pm.PackageManager;
 import android.util.Log;
-
-import androidx.core.app.ActivityCompat;
-
 
 public class BluetoothScan {
     public static final int SCAN_FEATURE_ERROR = 0x00;
