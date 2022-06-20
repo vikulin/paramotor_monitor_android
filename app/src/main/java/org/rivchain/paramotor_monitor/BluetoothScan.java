@@ -1,12 +1,16 @@
 package org.rivchain.paramotor_monitor;
 
 
+import android.Manifest;
+import android.annotation.SuppressLint;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
 import android.bluetooth.BluetoothManager;
 import android.content.Context;
 import android.content.pm.PackageManager;
 import android.util.Log;
+
+import androidx.core.app.ActivityCompat;
 
 
 public class BluetoothScan {
@@ -19,6 +23,7 @@ public class BluetoothScan {
     private static BluetoothAdapter mBluetoothAdapter;
     private static BluetoothScanCallBack mBluetoothScanCallBack;
 
+    @SuppressLint("MissingPermission")
     public static void startScan(boolean autoEnable, BluetoothScanCallBack callBack) {
         mBluetoothScanCallBack = callBack;
         if (!isBluetoothSupport(autoEnable)) {
@@ -31,6 +36,7 @@ public class BluetoothScan {
         }
     }
 
+    @SuppressLint("MissingPermission")
     public static void stopScan() {
         if (mBluetoothAdapter != null) {
             mBluetoothAdapter.stopLeScan(mLeScanCallback);
@@ -39,6 +45,7 @@ public class BluetoothScan {
         }
     }
 
+    @SuppressLint("MissingPermission")
     private static boolean isBluetoothSupport(Boolean autoEnable) {
         if (!MyApplication.context().getPackageManager().
                 hasSystemFeature(PackageManager.FEATURE_BLUETOOTH_LE)) {
