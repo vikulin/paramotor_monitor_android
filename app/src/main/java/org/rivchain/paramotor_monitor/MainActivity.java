@@ -110,9 +110,9 @@ public class MainActivity extends AppCompatActivity implements OnBluetoothDevice
     private void requestPermission() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             // Android M Permission check.
-            if (this.checkSelfPermission(Manifest.permission.ACCESS_COARSE_LOCATION)
+            if (this.checkSelfPermission(Manifest.permission.BLUETOOTH_SCAN)
                     != PackageManager.PERMISSION_GRANTED) {
-                requestPermissions(new String[]{Manifest.permission.ACCESS_COARSE_LOCATION},
+                requestPermissions(new String[]{Manifest.permission.BLUETOOTH_SCAN},
                         PERMISSION_REQUEST_COARSE_LOCATION);
             }
         }
