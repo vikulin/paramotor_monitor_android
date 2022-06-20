@@ -65,6 +65,7 @@ public class MainActivity extends AppCompatActivity implements OnBluetoothDevice
 
 
     private static final int REQUEST_CONNECT = 1;
+    private static final int PERMISSION_REQUEST_BLUETOOTH = 0;
     private static final int PERMISSION_REQUEST_COARSE_LOCATION = 2;
     public static final String EXTRAS_DEVICE_NAME = "extras_device_name";
     public static final String EXTRAS_DEVICE_ADDRESS = "extras_device_address";
@@ -88,7 +89,7 @@ public class MainActivity extends AppCompatActivity implements OnBluetoothDevice
         setContentView(R.layout.activity_main);
 
         initView();
-        requestPermission();
+        this.requestPermissions();
         initData();
         initService();
     }
@@ -107,13 +108,16 @@ public class MainActivity extends AppCompatActivity implements OnBluetoothDevice
         unregisterReceiver(mGattUpdateReceiver);
     }
 
-    private void requestPermission() {
+    private void requestPermissions() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             // Android M Permission check.
-            if (this.checkSelfPermission(Manifest.permission.BLUETOOTH_SCAN)
-                    != PackageManager.PERMISSION_GRANTED) {
+            if (this.checkSelfPermission(Manifest.permission.BLUETOOTH_SCAN) != PackageManager.PERMISSION_GRANTED) {
                 requestPermissions(new String[]{Manifest.permission.BLUETOOTH_SCAN},
                         PERMISSION_REQUEST_COARSE_LOCATION);
+            }
+            if (this.checkSelfPermission(Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+                requestPermissions(new String[]{Manifest.permission.ACCESS_COARSE_LOCATION},
+                        PERMISSION_REQUEST_BLUETOOTH);
             }
         }
     }
