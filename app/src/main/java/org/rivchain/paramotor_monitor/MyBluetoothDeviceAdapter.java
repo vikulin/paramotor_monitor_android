@@ -1,6 +1,7 @@
 package org.rivchain.paramotor_monitor;
 
 
+import android.annotation.SuppressLint;
 import android.bluetooth.BluetoothDevice;
 import android.content.Context;
 
@@ -48,6 +49,7 @@ public class MyBluetoothDeviceAdapter extends RecyclerView.Adapter<MyBluetoothDe
         mRandomInt = mRandom.nextInt(mDrawableList.size());
     }
 
+    @SuppressLint("MissingPermission")
     @Override
     public MyBluetoothDeviceAdapter.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         if (mContext == null) {
@@ -87,6 +89,7 @@ public class MyBluetoothDeviceAdapter extends RecyclerView.Adapter<MyBluetoothDe
         return holder;
     }
 
+    @SuppressLint("MissingPermission")
     @Override
     public void onBindViewHolder(MyBluetoothDeviceAdapter.ViewHolder holder, int position) {
         BluetoothDevice device = mBluetoothDeviceList.get(position);
