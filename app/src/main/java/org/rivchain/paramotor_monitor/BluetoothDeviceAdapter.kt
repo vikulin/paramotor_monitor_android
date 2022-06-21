@@ -18,10 +18,10 @@ import java.util.*
 /**
  * Created by WGH on 2017/4/10.
  */
-class MyBluetoothDeviceAdapter(
+class BluetoothDeviceAdapter(
     private val mBluetoothDeviceList: List<BluetoothDevice>,
     private val mBluetoothClickListener: OnBluetoothDeviceClickedListener
-) :    RecyclerView.Adapter<MyBluetoothDeviceAdapter.ViewHolder>() {
+) :    RecyclerView.Adapter<BluetoothDeviceAdapter.ViewHolder>() {
     private var mContext: Context? = null
     private val mDrawableList: ArrayList<Int> = ArrayList()
     private var mRandomInt = 0

@@ -7,7 +7,8 @@ import android.os.Process
 /**
  * Created by WGH on 2017/4/10.
  */
-class MyApplication : Application() {
+class MainApplication : Application() {
+
     override fun onCreate() {
         super.onCreate()
         context = applicationContext
@@ -15,8 +16,11 @@ class MyApplication : Application() {
     }
 
     companion object {
+
         private var context: Context? = null
+
         private var mPId = 0
+
         fun context(): Context? {
             return context
         }

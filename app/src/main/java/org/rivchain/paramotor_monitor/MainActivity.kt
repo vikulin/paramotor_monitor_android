@@ -27,7 +27,7 @@ class MainActivity : AppCompatActivity(), OnBluetoothDeviceClickedListener {
     private var mConnectionState = BluetoothLeService.ACTION_GATT_DISCONNECTED
     private var swipeRefresh: SwipeRefreshLayout? = null
     private var recyclerView: RecyclerView? = null
-    private var mBluetoothDeviceAdapter: MyBluetoothDeviceAdapter? = null
+    private var mBluetoothDeviceAdapter: BluetoothDeviceAdapter? = null
     private val mBluetoothDeviceList: MutableList<BluetoothDevice> = ArrayList()
     private val mBluetoothScanCallBack = MyBluetoothScanCallBack()
     private var mHandler: Handler? = null
@@ -107,10 +107,10 @@ class MainActivity : AppCompatActivity(), OnBluetoothDeviceClickedListener {
         mHandler = Handler()
         val layoutManager = GridLayoutManager(this, 2)
         recyclerView!!.layoutManager = layoutManager
-        mBluetoothDeviceAdapter = MyBluetoothDeviceAdapter(mBluetoothDeviceList, this)
+        mBluetoothDeviceAdapter = BluetoothDeviceAdapter(mBluetoothDeviceList, this)
         recyclerView!!.setAdapter(mBluetoothDeviceAdapter)
         swipeRefresh!!.setOnRefreshListener {
-            mBluetoothDeviceList?.clear()
+            mBluetoothDeviceList.clear()
             scanLeDevice(true)
         }
     }
@@ -244,13 +244,14 @@ class MainActivity : AppCompatActivity(), OnBluetoothDeviceClickedListener {
         }
     }
 
+    @Deprecated("Deprecated in Java")
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         if (requestCode == REQUEST_ENABLE_BT) {
             if (resultCode == RESULT_CANCELED) {
                 showMsg("enable_bluetooth_error")
                 return
             } else if (resultCode == RESULT_OK) {
-                mBluetoothDeviceList?.clear()
+                mBluetoothDeviceList.clear()
                 scanLeDevice(true)
             }
         }
@@ -269,7 +270,7 @@ class MainActivity : AppCompatActivity(), OnBluetoothDeviceClickedListener {
         fun showMsg(msg: String?) {
             try {
                 if (toast == null) {
-                    toast = Toast.makeText(MyApplication.context(), msg, Toast.LENGTH_SHORT)
+                    toast = Toast.makeText(MainApplication.context(), msg, Toast.LENGTH_SHORT)
                 } else {
                     toast!!.setText(msg)
                 }

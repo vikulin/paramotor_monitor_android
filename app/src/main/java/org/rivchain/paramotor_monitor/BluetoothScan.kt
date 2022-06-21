@@ -41,14 +41,14 @@ object BluetoothScan {
 
     @SuppressLint("MissingPermission")
     private fun isBluetoothSupport(autoEnable: Boolean): Boolean {
-        if (!MyApplication.context()!!.packageManager
+        if (!MainApplication.context()!!.packageManager
                 .hasSystemFeature(PackageManager.FEATURE_BLUETOOTH_LE)
         ) {
             mBluetoothScanCallBack!!.onLeScanInitFailure(SCAN_FEATURE_ERROR)
             return false
         }
         val bluetoothManager =
-            MyApplication.context()!!.getSystemService(Context.BLUETOOTH_SERVICE) as BluetoothManager
+            MainApplication.context()!!.getSystemService(Context.BLUETOOTH_SERVICE) as BluetoothManager
         mBluetoothAdapter = bluetoothManager.adapter
         return if (mBluetoothAdapter != null) {
             if (!mBluetoothAdapter!!.isEnabled) {
