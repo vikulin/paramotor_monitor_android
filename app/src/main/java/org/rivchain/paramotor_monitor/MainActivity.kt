@@ -20,7 +20,6 @@ import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import com.rivchain.paramotor_monitor.R
-import java.util.*
 
 class MainActivity : AppCompatActivity(), OnBluetoothDeviceClickedListener {
     private val REQUEST_PERMISSION_ACCESS_FINE_LOCATION = 1
@@ -176,7 +175,7 @@ class MainActivity : AppCompatActivity(), OnBluetoothDeviceClickedListener {
                 mBluetoothLeService!!.supportedGattServices
             } else if (BluetoothLeService.ACTION_DATA_AVAILABLE == action) {
                 val data = intent.getByteArrayExtra(BluetoothLeService.EXTRA_DATA)
-                showMsg("Got string : " + data?.let { String(it) })
+                //showMsg("Got string : " + data?.let { String(it) })
                 if (data != null && data.size > 0) {
                     val stringBuilder = StringBuilder(data.size)
                     for (byteChar in data) {
@@ -242,7 +241,7 @@ class MainActivity : AppCompatActivity(), OnBluetoothDeviceClickedListener {
 
         @SuppressLint("MissingPermission")
         override fun onLeScanResult(device: BluetoothDevice?, rssi: Int, scanRecord: ByteArray?) {
-            if(!contains(device) && device?.name!=null) {
+            if (!contains(device) && device?.name != null) {
                 var bluetoothDeviceData = BluetoothDeviceData()
                 bluetoothDeviceData.mBluetoothDevice = device
                 mBluetoothDeviceList.add(bluetoothDeviceData)
@@ -251,9 +250,9 @@ class MainActivity : AppCompatActivity(), OnBluetoothDeviceClickedListener {
         }
     }
 
-    fun contains(device: BluetoothDevice?) :Boolean {
-        for(bluetoothDeviceData in mBluetoothDeviceList){
-            if(bluetoothDeviceData.mBluetoothDevice!!.equals(device)){
+    fun contains(device: BluetoothDevice?): Boolean {
+        for (bluetoothDeviceData in mBluetoothDeviceList) {
+            if (bluetoothDeviceData.mBluetoothDevice!!.equals(device)) {
                 return true
             }
         }
@@ -261,9 +260,9 @@ class MainActivity : AppCompatActivity(), OnBluetoothDeviceClickedListener {
     }
 
     @SuppressLint("MissingPermission")
-    fun setStatusConnected(mDevice: BluetoothDeviceData, status :Boolean) :Boolean {
-        for(bluetoothDeviceData in mBluetoothDeviceList){
-            if(bluetoothDeviceData.mBluetoothDevice!!.name.equals(mDevice.mBluetoothDevice!!.name)){
+    fun setStatusConnected(mDevice: BluetoothDeviceData, status: Boolean): Boolean {
+        for (bluetoothDeviceData in mBluetoothDeviceList) {
+            if (bluetoothDeviceData.mBluetoothDevice!!.name.equals(mDevice.mBluetoothDevice!!.name)) {
                 bluetoothDeviceData.isConnected = status
                 return true
             }
@@ -272,10 +271,12 @@ class MainActivity : AppCompatActivity(), OnBluetoothDeviceClickedListener {
     }
 
     @SuppressLint("MissingPermission")
-    fun setData(mDevice: BluetoothDeviceData, data :String) :Boolean {
-        for(bluetoothDeviceData in mBluetoothDeviceList){
-            if(bluetoothDeviceData.mBluetoothDevice!!.equals(mDevice)){
-                bluetoothDeviceData.deviceData!!.data = data
+    fun setData(mDevice: BluetoothDeviceData, data: String): Boolean {
+        for (bluetoothDeviceData in mBluetoothDeviceList) {
+            if (bluetoothDeviceData.mBluetoothDevice!!.name.equals(mDevice.mBluetoothDevice!!.name)) {
+                var newData = DeviceData()
+                newData.data = data
+                bluetoothDeviceData.deviceData = newData
                 return true
             }
         }
@@ -303,7 +304,7 @@ class MainActivity : AppCompatActivity(), OnBluetoothDeviceClickedListener {
         const val EXTRAS_DEVICE_NAME = "extras_device_name"
         const val EXTRAS_DEVICE_ADDRESS = "extras_device_address"
         private const val REQUEST_ENABLE_BT = 1
-        private const val SCAN_PERIOD = (1000 * 10).toLong()
+        private const val SCAN_PERIOD = (1000 * 5).toLong()
         var toast: Toast? = null
         fun showMsg(msg: String?) {
             try {

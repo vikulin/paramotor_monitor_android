@@ -17,6 +17,7 @@ object BluetoothScan {
     const val AUTO_ENABLE_FAILURE = 0x04
     private var mBluetoothAdapter: BluetoothAdapter? = null
     private var mBluetoothScanCallBack: BluetoothScanCallBack? = null
+
     @SuppressLint("MissingPermission")
     fun startScan(autoEnable: Boolean, callBack: BluetoothScanCallBack?) {
         mBluetoothScanCallBack = callBack
@@ -48,7 +49,8 @@ object BluetoothScan {
             return false
         }
         val bluetoothManager =
-            MainApplication.context()!!.getSystemService(Context.BLUETOOTH_SERVICE) as BluetoothManager
+            MainApplication.context()!!
+                .getSystemService(Context.BLUETOOTH_SERVICE) as BluetoothManager
         mBluetoothAdapter = bluetoothManager.adapter
         return if (mBluetoothAdapter != null) {
             if (!mBluetoothAdapter!!.isEnabled) {

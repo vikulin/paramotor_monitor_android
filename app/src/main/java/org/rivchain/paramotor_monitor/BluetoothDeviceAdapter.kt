@@ -12,7 +12,6 @@ import android.widget.TextView
 import androidx.cardview.widget.CardView
 import androidx.recyclerview.widget.RecyclerView
 import com.rivchain.paramotor_monitor.R
-import kotlin.collections.ArrayList
 
 /**
  * Created by WGH on 2017/4/10.
@@ -20,7 +19,7 @@ import kotlin.collections.ArrayList
 class BluetoothDeviceAdapter(
     private val mBluetoothDeviceList: List<BluetoothDeviceData>,
     private val mBluetoothClickListener: OnBluetoothDeviceClickedListener
-) :    RecyclerView.Adapter<BluetoothDeviceAdapter.ViewHolder>() {
+) : RecyclerView.Adapter<BluetoothDeviceAdapter.ViewHolder>() {
 
     private var mContext: Context? = null
     private val mDrawableList: ArrayList<Int> = ArrayList()
@@ -67,7 +66,7 @@ class BluetoothDeviceAdapter(
         } else {
             holder.deviceName.text = device.mBluetoothDevice!!.name
         }
-        if(device.isConnected){
+        if (device.isConnected) {
             holder.deviceImage.setImageResource(R.drawable.bluetoothf_connected)
         } else {
             holder.deviceImage.setImageResource(R.drawable.bluetoothf)

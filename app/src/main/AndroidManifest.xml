@@ -7,8 +7,8 @@
     <uses-permission android:name="android.permission.BLUETOOTH_CONNECT" />
     <uses-permission android:name="android.permission.BLUETOOTH_SCAN" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
-    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION"/>
-    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION"/>
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
 
     <uses-feature android:name="android.hardware.bluetooth_le" />
 
@@ -20,7 +20,8 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:theme="@style/AppTheme">
 
-        <activity android:name="org.rivchain.paramotor_monitor.MainActivity"
+        <activity
+            android:name="org.rivchain.paramotor_monitor.MainActivity"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -28,6 +29,8 @@
             </intent-filter>
         </activity>
 
-        <service android:name="org.rivchain.paramotor_monitor.BluetoothLeService" android:enabled="true"/>
+        <service
+            android:name="org.rivchain.paramotor_monitor.BluetoothLeService"
+            android:enabled="true" />
     </application>
 </manifest>
