@@ -27,6 +27,14 @@
             android:layout_marginLeft="15dp"
             android:layout_centerVertical="true"
             android:textSize="16sp"/>
+        <TextView
+            android:id="@+id/device_data"
+            android:layout_toEndOf="@id/device_name"
+            android:layout_width="wrap_content"
+            android:layout_height="22dp"
+            android:layout_marginLeft="15dp"
+            android:layout_centerVertical="true"
+            android:textSize="14sp"/>
     </RelativeLayout>
 
 </androidx.cardview.widget.CardView>

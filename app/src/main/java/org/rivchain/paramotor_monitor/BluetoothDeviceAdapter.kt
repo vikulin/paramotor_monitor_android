@@ -1,7 +1,6 @@
 package org.rivchain.paramotor_monitor
 
 import android.annotation.SuppressLint
-import android.bluetooth.BluetoothDevice
 import android.content.Context
 import android.text.TextUtils
 import android.util.Log
@@ -13,13 +12,13 @@ import android.widget.TextView
 import androidx.cardview.widget.CardView
 import androidx.recyclerview.widget.RecyclerView
 import com.rivchain.paramotor_monitor.R
-import java.util.*
+import kotlin.collections.ArrayList
 
 /**
  * Created by WGH on 2017/4/10.
  */
 class BluetoothDeviceAdapter(
-    private val mBluetoothDeviceList: List<BluetoothDevice>,
+    private val mBluetoothDeviceList: List<BluetoothDeviceData>,
     private val mBluetoothClickListener: OnBluetoothDeviceClickedListener
 ) :    RecyclerView.Adapter<BluetoothDeviceAdapter.ViewHolder>() {
 
@@ -51,7 +50,7 @@ class BluetoothDeviceAdapter(
             }
             val device = mBluetoothDeviceList[holder.absoluteAdapterPosition]
             BluetoothScan.stopScan()
-            mBluetoothClickListener.onBluetoothDeviceClicked(device.name, device.address)
+            mBluetoothClickListener.onBluetoothDeviceClicked(device)
         })
         holder.cardView.setOnLongClickListener {
             Log.e("MyBluetoothDeviceAd", "LongClick :　" + holder.absoluteAdapterPosition)
@@ -63,12 +62,16 @@ class BluetoothDeviceAdapter(
     @SuppressLint("MissingPermission")
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         val device = mBluetoothDeviceList[position]
-        if (TextUtils.isEmpty(device.name)) {
+        if (TextUtils.isEmpty(device.mBluetoothDevice!!.name)) {
             holder.deviceName.text = "device unknown"
         } else {
-            holder.deviceName.text = device.name
+            holder.deviceName.text = device.mBluetoothDevice!!.name
         }
-        holder.deviceImage.setImageResource(R.drawable.bluetoothf)
+        if(device.isConnected){
+            holder.deviceImage.setImageResource(R.drawable.bluetoothf_connected)
+        } else {
+            holder.deviceImage.setImageResource(R.drawable.bluetoothf)
+        }
     }
 
     override fun getItemCount(): Int {
