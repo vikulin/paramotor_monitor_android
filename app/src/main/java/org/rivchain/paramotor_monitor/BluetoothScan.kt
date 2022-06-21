@@ -15,7 +15,7 @@ object BluetoothScan {
     const val SCAN_NEED_ENADLE = 0x02
     const val SCAN_BEGIN_SCAN = 0x03
     const val AUTO_ENABLE_FAILURE = 0x04
-    private var mBluetoothAdapter: BluetoothAdapter? = null
+    private lateinit var mBluetoothAdapter: BluetoothAdapter
     private var mBluetoothScanCallBack: BluetoothScanCallBack? = null
 
     @SuppressLint("MissingPermission")
@@ -24,20 +24,12 @@ object BluetoothScan {
         if (!isBluetoothSupport(autoEnable)) {
             return
         }
-        if (mBluetoothAdapter != null) {
-            mBluetoothAdapter!!.startLeScan(mLeScanCallback)
-        } else {
-            Log.e("BluetoothScan", "mBluetoothAdapter is null.")
-        }
+        mBluetoothAdapter.startLeScan(mLeScanCallback)
     }
 
     @SuppressLint("MissingPermission")
     fun stopScan() {
-        if (mBluetoothAdapter != null) {
-            mBluetoothAdapter!!.stopLeScan(mLeScanCallback)
-        } else {
-            Log.e("BluetoothScan", "mBluetoothAdapter is null.")
-        }
+        mBluetoothAdapter.stopLeScan(mLeScanCallback)
     }
 
     @SuppressLint("MissingPermission")
@@ -52,27 +44,22 @@ object BluetoothScan {
             MainApplication.context()!!
                 .getSystemService(Context.BLUETOOTH_SERVICE) as BluetoothManager
         mBluetoothAdapter = bluetoothManager.adapter
-        return if (mBluetoothAdapter != null) {
-            if (!mBluetoothAdapter!!.isEnabled) {
-                if (autoEnable) {
-                    if (mBluetoothAdapter!!.enable()) {
-                        mBluetoothScanCallBack!!.onLeScanInitSuccess(SCAN_BEGIN_SCAN)
-                        true
-                    } else {
-                        mBluetoothScanCallBack!!.onLeScanInitSuccess(AUTO_ENABLE_FAILURE)
-                        false
-                    }
+        return if (!mBluetoothAdapter.isEnabled) {
+            if (autoEnable) {
+                if (mBluetoothAdapter.enable()) {
+                    mBluetoothScanCallBack!!.onLeScanInitSuccess(SCAN_BEGIN_SCAN)
+                    true
                 } else {
-                    mBluetoothScanCallBack!!.onLeScanInitSuccess(SCAN_NEED_ENADLE)
+                    mBluetoothScanCallBack!!.onLeScanInitSuccess(AUTO_ENABLE_FAILURE)
                     false
                 }
             } else {
-                mBluetoothScanCallBack!!.onLeScanInitSuccess(SCAN_BEGIN_SCAN)
-                true
+                mBluetoothScanCallBack!!.onLeScanInitSuccess(SCAN_NEED_ENADLE)
+                false
             }
         } else {
-            mBluetoothScanCallBack!!.onLeScanInitFailure(SCAN_ADAPTER_ERROR)
-            false
+            mBluetoothScanCallBack!!.onLeScanInitSuccess(SCAN_BEGIN_SCAN)
+            true
         }
     }
 

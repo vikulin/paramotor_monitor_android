@@ -304,7 +304,7 @@ class MainActivity : AppCompatActivity(), OnBluetoothDeviceClickedListener {
         const val EXTRAS_DEVICE_NAME = "extras_device_name"
         const val EXTRAS_DEVICE_ADDRESS = "extras_device_address"
         private const val REQUEST_ENABLE_BT = 1
-        private const val SCAN_PERIOD = (1000 * 5).toLong()
+        private const val SCAN_PERIOD = (1000 * 3).toLong()
         var toast: Toast? = null
         fun showMsg(msg: String?) {
             try {
