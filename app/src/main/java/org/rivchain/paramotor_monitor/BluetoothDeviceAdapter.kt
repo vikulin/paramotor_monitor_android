@@ -72,6 +72,11 @@ class BluetoothDeviceAdapter(
         } else {
             holder.deviceImage.setImageResource(R.drawable.bluetoothf)
         }
+        if (TextUtils.isEmpty(device.deviceData?.data)) {
+            holder.deviceData.text = "No data"
+        } else {
+            holder.deviceData.text = device.deviceData!!.data
+        }
     }
 
     override fun getItemCount(): Int {
@@ -82,11 +87,13 @@ class BluetoothDeviceAdapter(
         var cardView: CardView
         var deviceImage: ImageView
         var deviceName: TextView
+        var deviceData: TextView
 
         init {
             cardView = view as CardView
             deviceImage = view.findViewById<View>(R.id.device_image) as ImageView
             deviceName = view.findViewById<View>(R.id.device_name) as TextView
+            deviceData = view.findViewById<View>(R.id.device_data) as TextView
         }
     }
 

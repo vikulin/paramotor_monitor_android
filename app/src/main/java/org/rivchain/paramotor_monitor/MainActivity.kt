@@ -32,8 +32,8 @@ class MainActivity : AppCompatActivity(), OnBluetoothDeviceClickedListener {
     private val mBluetoothScanCallBack = MyBluetoothScanCallBack()
     private var mHandler: Handler? = null
     private var mBluetoothLeService: BluetoothLeService? = null
-    private lateinit var mDeviceName: String
-    private lateinit var mDeviceAddress: String
+    private lateinit var mDevice: BluetoothDeviceData
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
@@ -163,14 +163,14 @@ class MainActivity : AppCompatActivity(), OnBluetoothDeviceClickedListener {
                 mConnectionState = BluetoothLeService.ACTION_GATT_CONNECTED
                 swipeRefresh!!.isRefreshing = false
                 //inputMessage()
-                setStatusConnected(mDeviceName, true)
+                setStatusConnected(mDevice, true)
                 mBluetoothDeviceAdapter?.notifyDataSetChanged()
             } else if (BluetoothLeService.ACTION_GATT_DISCONNECTED == action) {
                 Log.i("MainActivity", "ACTION_GATT_DISCONNECTED!!!")
                 showMsg("disconnected")
                 mConnectionState = BluetoothLeService.ACTION_GATT_DISCONNECTED
                 swipeRefresh!!.isRefreshing = false
-                setStatusConnected(mDeviceName, false)
+                setStatusConnected(mDevice, false)
                 mBluetoothDeviceAdapter?.notifyDataSetChanged()
             } else if (BluetoothLeService.ACTION_GATT_SERVICES_DISCOVERED == action) {
                 mBluetoothLeService!!.supportedGattServices
@@ -184,6 +184,8 @@ class MainActivity : AppCompatActivity(), OnBluetoothDeviceClickedListener {
                         stringBuilder.append(b)
                     }
                     Log.i("MainActivity", "Get string : $stringBuilder")
+                    setData(mDevice, stringBuilder.toString())
+                    mBluetoothDeviceAdapter?.notifyDataSetChanged()
                 }
             }
         }
@@ -259,10 +261,21 @@ class MainActivity : AppCompatActivity(), OnBluetoothDeviceClickedListener {
     }
 
     @SuppressLint("MissingPermission")
-    fun setStatusConnected(deviceName: String, status :Boolean) :Boolean {
+    fun setStatusConnected(mDevice: BluetoothDeviceData, status :Boolean) :Boolean {
         for(bluetoothDeviceData in mBluetoothDeviceList){
-            if(bluetoothDeviceData.mBluetoothDevice!!.name.equals(deviceName)){
+            if(bluetoothDeviceData.mBluetoothDevice!!.name.equals(mDevice.mBluetoothDevice!!.name)){
                 bluetoothDeviceData.isConnected = status
+                return true
+            }
+        }
+        return false
+    }
+
+    @SuppressLint("MissingPermission")
+    fun setData(mDevice: BluetoothDeviceData, data :String) :Boolean {
+        for(bluetoothDeviceData in mBluetoothDeviceList){
+            if(bluetoothDeviceData.mBluetoothDevice!!.equals(mDevice)){
+                bluetoothDeviceData.deviceData!!.data = data
                 return true
             }
         }
@@ -308,8 +321,9 @@ class MainActivity : AppCompatActivity(), OnBluetoothDeviceClickedListener {
 
     @SuppressLint("MissingPermission")
     override fun onBluetoothDeviceClicked(bluetoothDeviceData: BluetoothDeviceData) {
-        mDeviceName = bluetoothDeviceData.mBluetoothDevice!!.name
-        mDeviceAddress = bluetoothDeviceData.mBluetoothDevice!!.address
+        mDevice = bluetoothDeviceData
+        val mDeviceName = mDevice.mBluetoothDevice!!.name
+        val mDeviceAddress = mDevice.mBluetoothDevice!!.address
         Log.i("MainActivity", "Attempt to connect device : $mDeviceName($mDeviceAddress)")
         if (mBluetoothLeService != null) {
             if (!bluetoothDeviceData.isConnected) {

@@ -2,6 +2,6 @@ package org.rivchain.paramotor_monitor
 
 class DeviceData {
 
-    val data: String? = null
+    var data: String? = null
 
 }
