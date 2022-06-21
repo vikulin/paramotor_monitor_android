@@ -42,19 +42,19 @@ class BluetoothDeviceAdapter(
             LayoutInflater.from(mContext).inflate(R.layout.bluetoothdevice_item, parent, false)
         val holder = ViewHolder(view)
         holder.cardView.setOnClickListener(View.OnClickListener {
-            if (holder.adapterPosition < 0) {
+            if (holder.absoluteAdapterPosition < 0) {
                 Log.e(
                     "MyBluetoothDeviceAd",
-                    "holder.getAdapterPosition() : " + holder.adapterPosition
+                    "holder.getAdapterPosition() : " + holder.absoluteAdapterPosition
                 )
                 return@OnClickListener
             }
-            val device = mBluetoothDeviceList[holder.adapterPosition]
+            val device = mBluetoothDeviceList[holder.absoluteAdapterPosition]
             BluetoothScan.stopScan()
             mBluetoothClickListener.onBluetoothDeviceClicked(device.name, device.address)
         })
         holder.cardView.setOnLongClickListener {
-            Log.e("MyBluetoothDeviceAd", "LongClick :　" + holder.adapterPosition)
+            Log.e("MyBluetoothDeviceAd", "LongClick :　" + holder.absoluteAdapterPosition)
             true
         }
         return holder

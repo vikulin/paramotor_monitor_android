@@ -105,7 +105,7 @@ class MainActivity : AppCompatActivity(), OnBluetoothDeviceClickedListener {
 
     private fun initData() {
         mHandler = Handler()
-        val layoutManager = GridLayoutManager(this, 2)
+        val layoutManager = GridLayoutManager(this, 1)
         recyclerView!!.layoutManager = layoutManager
         mBluetoothDeviceAdapter = BluetoothDeviceAdapter(mBluetoothDeviceList, this)
         recyclerView!!.setAdapter(mBluetoothDeviceAdapter)

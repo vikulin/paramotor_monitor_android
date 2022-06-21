@@ -4,29 +4,29 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_margin="5dp"
+    android:layout_margin="10dp"
     app:cardCornerRadius="6dp">
 
-    <LinearLayout
+    <RelativeLayout
         android:id="@+id/ll_bluetooth_item"
-        android:orientation="vertical"
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
 
         <ImageView
             android:id="@+id/device_image"
-            android:layout_width="match_parent"
-            android:layout_height="150dp"
-            android:scaleType="centerCrop"
-            android:background="@color/colorPrimary"/>
+            android:layout_width="60dp"
+            android:layout_height="60dp"
+            android:scaleType="fitStart"
+            android:background="@color/cardview_light_background" />
 
         <TextView
             android:id="@+id/device_name"
+            android:layout_toEndOf="@id/device_image"
             android:layout_width="wrap_content"
             android:layout_height="22dp"
-            android:layout_gravity="center_horizontal"
-            android:layout_margin="5dp"
-            android:textSize="16sp" />
-    </LinearLayout>
+            android:layout_marginLeft="15dp"
+            android:layout_centerVertical="true"
+            android:textSize="16sp"/>
+    </RelativeLayout>
 
 </androidx.cardview.widget.CardView>

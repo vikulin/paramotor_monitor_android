@@ -1,30 +1,28 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical" android:layout_width="fill_parent"
-    android:layout_height="85dp"
-    android:weightSum="1"
-    >
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="85dp">
 
 
     <TextView
+        android:id="@+id/titleTextView"
         android:layout_width="240dp"
         android:layout_height="wrap_content"
         android:textAppearance="?android:attr/textAppearanceLarge"
         android:text="Large Text"
-        android:id="@+id/titleTextView"
         android:layout_gravity="center"
         android:textStyle="bold"
         android:paddingTop="3dp"
         android:textAlignment="center"
         android:textSize="30sp"
-        android:singleLine="true" />
+        android:singleLine="true"/>
 
     <View
         android:layout_width="250dp"
         android:layout_height="1dp"
         android:id="@+id/line"
-        android:layout_below="@+id/titleTextView"
-        />
+        android:layout_below="@+id/titleTextView"/>
 
     <TextView
         android:id="@+id/macAddress"
@@ -35,4 +33,5 @@
         android:text="MAC Address"
         android:textOff="disconnect"
         android:textOn="connect" />
+
 </RelativeLayout>
