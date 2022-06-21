@@ -32,8 +32,8 @@ class MainActivity : AppCompatActivity(), OnBluetoothDeviceClickedListener {
     private val mBluetoothScanCallBack = MyBluetoothScanCallBack()
     private var mHandler: Handler? = null
     private var mBluetoothLeService: BluetoothLeService? = null
-    private var mDeviceName: String? = null
-    private var mDeviceAddress: String? = null
+    private lateinit var mDeviceName: String
+    private lateinit var mDeviceAddress: String
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
@@ -163,19 +163,15 @@ class MainActivity : AppCompatActivity(), OnBluetoothDeviceClickedListener {
                 mConnectionState = BluetoothLeService.ACTION_GATT_CONNECTED
                 swipeRefresh!!.isRefreshing = false
                 //inputMessage()
-                mDeviceName?.let {
-                    setStatusConnected(it, true)
-                    mBluetoothDeviceAdapter?.notifyDataSetChanged()
-                }
+                setStatusConnected(mDeviceName, true)
+                mBluetoothDeviceAdapter?.notifyDataSetChanged()
             } else if (BluetoothLeService.ACTION_GATT_DISCONNECTED == action) {
                 Log.i("MainActivity", "ACTION_GATT_DISCONNECTED!!!")
                 showMsg("disconnected")
                 mConnectionState = BluetoothLeService.ACTION_GATT_DISCONNECTED
                 swipeRefresh!!.isRefreshing = false
-                mDeviceName?.let {
-                    setStatusConnected(it, false)
-                    mBluetoothDeviceAdapter?.notifyDataSetChanged()
-                }
+                setStatusConnected(mDeviceName, false)
+                mBluetoothDeviceAdapter?.notifyDataSetChanged()
             } else if (BluetoothLeService.ACTION_GATT_SERVICES_DISCOVERED == action) {
                 mBluetoothLeService!!.supportedGattServices
             } else if (BluetoothLeService.ACTION_DATA_AVAILABLE == action) {
@@ -244,7 +240,7 @@ class MainActivity : AppCompatActivity(), OnBluetoothDeviceClickedListener {
 
         @SuppressLint("MissingPermission")
         override fun onLeScanResult(device: BluetoothDevice?, rssi: Int, scanRecord: ByteArray?) {
-            if(!contains(device)) {
+            if(!contains(device) && device?.name!=null) {
                 var bluetoothDeviceData = BluetoothDeviceData()
                 bluetoothDeviceData.mBluetoothDevice = device
                 mBluetoothDeviceList.add(bluetoothDeviceData)
