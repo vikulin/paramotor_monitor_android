@@ -14,10 +14,9 @@
         android:id="@+id/titleTextView"
         android:layout_gravity="center"
         android:textStyle="bold"
-        android:layout_weight="0.04"
         android:paddingTop="3dp"
         android:textAlignment="center"
-        android:textSize="30dp"
+        android:textSize="30sp"
         android:singleLine="true" />
 
     <View

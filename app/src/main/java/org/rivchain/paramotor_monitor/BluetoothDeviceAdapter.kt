@@ -22,16 +22,15 @@ class BluetoothDeviceAdapter(
     private val mBluetoothDeviceList: List<BluetoothDevice>,
     private val mBluetoothClickListener: OnBluetoothDeviceClickedListener
 ) :    RecyclerView.Adapter<BluetoothDeviceAdapter.ViewHolder>() {
+
     private var mContext: Context? = null
     private val mDrawableList: ArrayList<Int> = ArrayList()
-    private var mRandomInt = 0
+
     private fun initDrawableList() {
         if (mDrawableList.size != 0) {
             mDrawableList.clear()
         }
         mDrawableList.add(R.drawable.bluetoothf)
-        val mRandom = Random()
-        mRandomInt = mRandom.nextInt(mDrawableList.size)
     }
 
     @SuppressLint("MissingPermission")
@@ -51,7 +50,6 @@ class BluetoothDeviceAdapter(
                 return@OnClickListener
             }
             val device = mBluetoothDeviceList[holder.adapterPosition]
-                ?: return@OnClickListener
             BluetoothScan.stopScan()
             mBluetoothClickListener.onBluetoothDeviceClicked(device.name, device.address)
         })
@@ -70,12 +68,7 @@ class BluetoothDeviceAdapter(
         } else {
             holder.deviceName.text = device.name
         }
-        holder.deviceImage.setImageResource(
-            mDrawableList[((position + mRandomInt) %
-                    mDrawableList.size + mDrawableList.size) % mDrawableList.size]
-        )
-        val layoutParams = holder.deviceImage.layoutParams
-        holder.deviceImage.layoutParams = layoutParams
+        holder.deviceImage.setImageResource(R.drawable.bluetoothf)
     }
 
     override fun getItemCount(): Int {
