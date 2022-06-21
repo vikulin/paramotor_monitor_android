@@ -14,7 +14,7 @@ android {
         minSdkVersion 18
         targetSdkVersion 32
         versionCode 1
-        versionName "0.1.1.0"
+        versionName "0.1.1.1"
         testInstrumentationRunner 'androidx.test.runner.AndroidJUnitRunner'
         setProperty("archivesBaseName", project.getParent().name + "-" + versionName)
     }
