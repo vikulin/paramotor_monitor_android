@@ -250,7 +250,7 @@ class MainActivity : AppCompatActivity(), OnBluetoothDeviceClickedListener {
         @SuppressLint("MissingPermission")
         override fun onLeScanResult(device: BluetoothDevice?, rssi: Int, scanRecord: ByteArray?) {
             //CC:50:E3:B6:94:36
-            if (!contains(device)) {
+            if (!contains(device) && device?.name!=null) {
                 var bluetoothDeviceData = BluetoothDeviceData()
                 bluetoothDeviceData.mBluetoothDevice = device
                 mBluetoothDeviceList.add(bluetoothDeviceData)
@@ -338,7 +338,7 @@ class MainActivity : AppCompatActivity(), OnBluetoothDeviceClickedListener {
         if (mBluetoothLeService != null) {
             if (!bluetoothDeviceData.isConnected) {
                 mBluetoothLeService!!.connect(mDeviceAddress)
-                showMsg("Attempt to connect device : $mDeviceName")
+                showMsg("connecting device : $mDeviceName")
                 mConnectionState = BluetoothLeService.ACTION_GATT_CONNECTING
                 swipeRefresh!!.isRefreshing = true
             } else {
