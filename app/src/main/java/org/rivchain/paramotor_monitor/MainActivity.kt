@@ -16,6 +16,7 @@ import android.widget.EditText
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.app.ActivityCompat
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
@@ -38,7 +39,6 @@ class MainActivity : AppCompatActivity(), OnBluetoothDeviceClickedListener {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
         initView()
-        this.requestPermissions()
         initData()
         initService()
     }
@@ -46,6 +46,12 @@ class MainActivity : AppCompatActivity(), OnBluetoothDeviceClickedListener {
     override fun onResume() {
         super.onResume()
         initReceiver()
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.BLUETOOTH_CONNECT) != PackageManager.PERMISSION_GRANTED ||
+            ActivityCompat.checkSelfPermission(this, Manifest.permission.BLUETOOTH_SCAN) != PackageManager.PERMISSION_GRANTED ||
+            ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            this.requestPermissions()
+            return
+        }
         scanLeDevice(true)
     }
 
@@ -57,17 +63,10 @@ class MainActivity : AppCompatActivity(), OnBluetoothDeviceClickedListener {
 
     private fun requestPermissions() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            // Android M Permission check.
-            if (checkSelfPermission(Manifest.permission.BLUETOOTH_SCAN) != PackageManager.PERMISSION_GRANTED) {
+            if (checkSelfPermission(Manifest.permission.BLUETOOTH_CONNECT) != PackageManager.PERMISSION_GRANTED) {
                 requestPermissions(
-                    arrayOf(Manifest.permission.BLUETOOTH_SCAN),
+                    arrayOf(Manifest.permission.BLUETOOTH_SCAN, Manifest.permission.BLUETOOTH_CONNECT, Manifest.permission.ACCESS_FINE_LOCATION),
                     PERMISSION_REQUEST_COARSE_LOCATION
-                )
-            }
-            if (checkSelfPermission(Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-                requestPermissions(
-                    arrayOf(Manifest.permission.ACCESS_FINE_LOCATION),
-                    PERMISSION_REQUEST_BLUETOOTH
                 )
             }
         }
@@ -80,7 +79,7 @@ class MainActivity : AppCompatActivity(), OnBluetoothDeviceClickedListener {
     ) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
         when (requestCode) {
-            REQUEST_PERMISSION_ACCESS_FINE_LOCATION -> if (grantResults.size > 0
+            PERMISSION_REQUEST_COARSE_LOCATION -> if (grantResults.size > 0
                 && grantResults[0] == PackageManager.PERMISSION_GRANTED
             ) {
                 Toast.makeText(this@MainActivity, "Permission Granted!", Toast.LENGTH_SHORT).show()
@@ -111,7 +110,6 @@ class MainActivity : AppCompatActivity(), OnBluetoothDeviceClickedListener {
         recyclerView!!.setAdapter(mBluetoothDeviceAdapter)
         swipeRefresh!!.setOnRefreshListener {
             //scan result does not return connected devices. save connected in list
-
             var connectedDeviceList = mBluetoothDeviceList.filter { key: BluetoothDeviceData -> key.isConnected } as MutableList<BluetoothDeviceData>
             mBluetoothDeviceList.clear()
             mBluetoothDeviceList.addAll(connectedDeviceList)
@@ -336,7 +334,7 @@ class MainActivity : AppCompatActivity(), OnBluetoothDeviceClickedListener {
         mDevice = bluetoothDeviceData
         val mDeviceName = mDevice.mBluetoothDevice!!.name
         val mDeviceAddress = mDevice.mBluetoothDevice!!.address
-        Log.i("MainActivity", "Attempt to connect device : $mDeviceName($mDeviceAddress)")
+        Log.i("MainActivity", "connecting device: $mDeviceName($mDeviceAddress)")
         if (mBluetoothLeService != null) {
             if (!bluetoothDeviceData.isConnected) {
                 mBluetoothLeService!!.connect(mDeviceAddress)

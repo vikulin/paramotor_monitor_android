@@ -76,7 +76,7 @@ class Database {
             for (contact in db.deviceInfoList) {
                 contacts.put(DeviceInfo.exportJSON(contact))
             }
-            obj.put("contacts", contacts)
+            obj.put("devices", contacts)
             return obj
         }
 
@@ -88,7 +88,7 @@ class Database {
             version = obj.getString("version")
 
             // import contacts
-            val array = obj.getJSONArray("contacts")
+            val array = obj.getJSONArray("devices")
             var i = 0
             while (i < array.length()) {
                 db.deviceInfoList.add(
