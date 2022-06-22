@@ -24,7 +24,7 @@ import com.rivchain.paramotor_monitor.R
 import org.rivchain.paramotor_monitor.db.Database
 
 class MainActivity : AppCompatActivity(), OnBluetoothDeviceClickedListener {
-    private val REQUEST_PERMISSION_ACCESS_FINE_LOCATION = 1
+
     private var mConnectionState = BluetoothLeService.ACTION_GATT_DISCONNECTED
     private var swipeRefresh: SwipeRefreshLayout? = null
     private var recyclerView: RecyclerView? = null
@@ -66,7 +66,7 @@ class MainActivity : AppCompatActivity(), OnBluetoothDeviceClickedListener {
             if (checkSelfPermission(Manifest.permission.BLUETOOTH_CONNECT) != PackageManager.PERMISSION_GRANTED) {
                 requestPermissions(
                     arrayOf(Manifest.permission.BLUETOOTH_SCAN, Manifest.permission.BLUETOOTH_CONNECT, Manifest.permission.ACCESS_FINE_LOCATION),
-                    PERMISSION_REQUEST_COARSE_LOCATION
+                    PERMISSIONS_REQUEST
                 )
             }
         }
@@ -79,7 +79,7 @@ class MainActivity : AppCompatActivity(), OnBluetoothDeviceClickedListener {
     ) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
         when (requestCode) {
-            PERMISSION_REQUEST_COARSE_LOCATION -> if (grantResults.size > 0
+            PERMISSIONS_REQUEST -> if (grantResults.size > 0
                 && grantResults[0] == PackageManager.PERMISSION_GRANTED
             ) {
                 Toast.makeText(this@MainActivity, "Permission Granted!", Toast.LENGTH_SHORT).show()
@@ -102,6 +102,7 @@ class MainActivity : AppCompatActivity(), OnBluetoothDeviceClickedListener {
         }
     }
 
+    @SuppressLint("MissingPermission")
     private fun initData() {
         mHandler = Handler()
         val layoutManager = GridLayoutManager(this, 1)
@@ -111,6 +112,7 @@ class MainActivity : AppCompatActivity(), OnBluetoothDeviceClickedListener {
         swipeRefresh!!.setOnRefreshListener {
             //scan result does not return connected devices. save connected in list
             var connectedDeviceList = mBluetoothDeviceList.filter { key: BluetoothDeviceData -> key.isConnected } as MutableList<BluetoothDeviceData>
+            connectedDeviceList.sortBy { it.mBluetoothDevice?.name }
             mBluetoothDeviceList.clear()
             mBluetoothDeviceList.addAll(connectedDeviceList)
             scanLeDevice(true)
@@ -307,11 +309,8 @@ class MainActivity : AppCompatActivity(), OnBluetoothDeviceClickedListener {
     }
 
     companion object {
-        private const val REQUEST_CONNECT = 1
-        private const val PERMISSION_REQUEST_BLUETOOTH = 0
-        private const val PERMISSION_REQUEST_COARSE_LOCATION = 2
-        const val EXTRAS_DEVICE_NAME = "extras_device_name"
-        const val EXTRAS_DEVICE_ADDRESS = "extras_device_address"
+
+        private const val PERMISSIONS_REQUEST = 2
         private const val REQUEST_ENABLE_BT = 1
         private const val SCAN_PERIOD = (1000 * 3).toLong()
         var toast: Toast? = null
