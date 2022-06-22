@@ -20,6 +20,7 @@ import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import com.rivchain.paramotor_monitor.R
+import org.rivchain.paramotor_monitor.db.Database
 
 class MainActivity : AppCompatActivity(), OnBluetoothDeviceClickedListener {
     private val REQUEST_PERMISSION_ACCESS_FINE_LOCATION = 1
@@ -27,7 +28,7 @@ class MainActivity : AppCompatActivity(), OnBluetoothDeviceClickedListener {
     private var swipeRefresh: SwipeRefreshLayout? = null
     private var recyclerView: RecyclerView? = null
     private var mBluetoothDeviceAdapter: BluetoothDeviceAdapter? = null
-    private val mBluetoothDeviceList: MutableList<BluetoothDeviceData> = ArrayList()
+    private var mBluetoothDeviceList: MutableList<BluetoothDeviceData> = ArrayList()
     private val mBluetoothScanCallBack = MyBluetoothScanCallBack()
     private var mHandler: Handler? = null
     private var mBluetoothLeService: BluetoothLeService? = null
@@ -109,7 +110,11 @@ class MainActivity : AppCompatActivity(), OnBluetoothDeviceClickedListener {
         mBluetoothDeviceAdapter = BluetoothDeviceAdapter(mBluetoothDeviceList, this)
         recyclerView!!.setAdapter(mBluetoothDeviceAdapter)
         swipeRefresh!!.setOnRefreshListener {
+            //scan result does not return connected devices. save connected in list
+
+            var connectedDeviceList = mBluetoothDeviceList.filter { key: BluetoothDeviceData -> key.isConnected } as MutableList<BluetoothDeviceData>
             mBluetoothDeviceList.clear()
+            mBluetoothDeviceList.addAll(connectedDeviceList)
             scanLeDevice(true)
         }
     }
@@ -164,6 +169,11 @@ class MainActivity : AppCompatActivity(), OnBluetoothDeviceClickedListener {
                 //inputMessage()
                 setStatusConnected(mDevice, true)
                 mBluetoothDeviceAdapter?.notifyDataSetChanged()
+                var db = Database.load(this@MainActivity)
+                mDevice.mBluetoothDevice?.let {
+                    db.addDeviceInfo(it)
+                    Database.store(db, this@MainActivity)
+                }
             } else if (BluetoothLeService.ACTION_GATT_DISCONNECTED == action) {
                 Log.i("MainActivity", "ACTION_GATT_DISCONNECTED!!!")
                 showMsg("disconnected")
@@ -241,7 +251,8 @@ class MainActivity : AppCompatActivity(), OnBluetoothDeviceClickedListener {
 
         @SuppressLint("MissingPermission")
         override fun onLeScanResult(device: BluetoothDevice?, rssi: Int, scanRecord: ByteArray?) {
-            if (!contains(device) && device?.name != null) {
+            //CC:50:E3:B6:94:36
+            if (!contains(device)) {
                 var bluetoothDeviceData = BluetoothDeviceData()
                 bluetoothDeviceData.mBluetoothDevice = device
                 mBluetoothDeviceList.add(bluetoothDeviceData)
@@ -262,7 +273,7 @@ class MainActivity : AppCompatActivity(), OnBluetoothDeviceClickedListener {
     @SuppressLint("MissingPermission")
     fun setStatusConnected(mDevice: BluetoothDeviceData, status: Boolean): Boolean {
         for (bluetoothDeviceData in mBluetoothDeviceList) {
-            if (bluetoothDeviceData.mBluetoothDevice!!.name.equals(mDevice.mBluetoothDevice!!.name)) {
+            if (bluetoothDeviceData.mBluetoothDevice!!.address.equals(mDevice.mBluetoothDevice!!.address)) {
                 bluetoothDeviceData.isConnected = status
                 return true
             }
@@ -273,7 +284,7 @@ class MainActivity : AppCompatActivity(), OnBluetoothDeviceClickedListener {
     @SuppressLint("MissingPermission")
     fun setData(mDevice: BluetoothDeviceData, data: String): Boolean {
         for (bluetoothDeviceData in mBluetoothDeviceList) {
-            if (bluetoothDeviceData.mBluetoothDevice!!.name.equals(mDevice.mBluetoothDevice!!.name)) {
+            if (bluetoothDeviceData.mBluetoothDevice!!.address.equals(mDevice.mBluetoothDevice!!.address)) {
                 var newData = DeviceData()
                 newData.data = data
                 bluetoothDeviceData.deviceData = newData
