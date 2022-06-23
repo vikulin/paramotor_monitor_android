@@ -9,6 +9,7 @@
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
+    <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW"/>
 
     <uses-feature android:name="android.hardware.bluetooth_le" />
 
@@ -31,6 +32,9 @@
 
         <service
             android:name="org.rivchain.paramotor_monitor.BluetoothLeService"
+            android:enabled="true" />
+        <service
+            android:name="org.rivchain.paramotor_monitor.OverlayService"
             android:enabled="true" />
     </application>
 </manifest>

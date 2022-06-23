@@ -17,7 +17,7 @@ import com.rivchain.paramotor_monitor.R
  * Created by WGH on 2017/4/10.
  */
 class BluetoothDeviceAdapter(
-    private val mBluetoothDeviceList: List<BluetoothDeviceData>,
+    val mBluetoothDeviceList: MutableList<BluetoothDeviceData>,
     private val mBluetoothClickListener: OnBluetoothDeviceClickedListener
 ) : RecyclerView.Adapter<BluetoothDeviceAdapter.ViewHolder>() {
 

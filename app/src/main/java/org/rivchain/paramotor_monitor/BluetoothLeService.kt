@@ -16,6 +16,7 @@ class BluetoothLeService : Service() {
     private var mBluetoothDeviceAddress: String? = null
     private var mBluetoothGatt: BluetoothGatt? = null
     private val mBinder: IBinder = LocalBinder()
+
     override fun onBind(intent: Intent): IBinder {
         return mBinder
     }

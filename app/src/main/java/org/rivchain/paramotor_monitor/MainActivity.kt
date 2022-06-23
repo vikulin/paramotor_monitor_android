@@ -8,10 +8,9 @@ import android.bluetooth.BluetoothManager
 import android.bluetooth.BluetoothProfile
 import android.content.*
 import android.content.pm.PackageManager
-import android.os.Build
-import android.os.Bundle
-import android.os.Handler
-import android.os.IBinder
+import android.net.Uri
+import android.os.*
+import android.provider.Settings
 import android.text.InputType
 import android.util.Log
 import android.view.View
@@ -26,7 +25,7 @@ import androidx.recyclerview.widget.RecyclerView
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import com.rivchain.paramotor_monitor.R
 import org.rivchain.paramotor_monitor.db.Database
-import java.lang.NullPointerException
+
 
 class MainActivity : AppCompatActivity(), OnBluetoothDeviceClickedListener {
 
@@ -38,7 +37,19 @@ class MainActivity : AppCompatActivity(), OnBluetoothDeviceClickedListener {
     private val mBluetoothScanCallBack = MyBluetoothScanCallBack()
     private var mHandler: Handler? = null
     private var mBluetoothLeService: BluetoothLeService? = null
+    private var mOverlayService: OverlayService? = null
     private var mLastConnectedDevice = 0
+
+    /*Overlay infrastructure*/
+    private var service: Intent? = null
+    private var foreground = false
+    private val statusHandler = Handler(Looper.getMainLooper())
+
+    private val statusChecker: Runnable = object : Runnable {
+        override fun run() {
+            statusHandler.postDelayed(this, 500)
+        }
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -74,6 +85,27 @@ class MainActivity : AppCompatActivity(), OnBluetoothDeviceClickedListener {
     override fun onResume() {
         super.onResume()
         initReceiver()
+        //Toast.makeText(this@MainActivity, "Permission Granted!", Toast.LENGTH_SHORT).show()
+        //check overlay permissions
+
+        //Check if the application has draw over other apps permission or not?
+        //This permission is by default available for API<23. But for API > 23
+        //you have to ask for the permission in runtime.
+        if (if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                !Settings.canDrawOverlays(this)
+            } else {
+                false
+            }
+        ) {
+            val intent = Intent(
+                Settings.ACTION_MANAGE_OVERLAY_PERMISSION,
+                Uri.parse("package:$packageName")
+            )
+            startActivityForResult(intent, CODE_DRAW_OVER_OTHER_APP_PERMISSION)
+        } else {
+            //changeStatus(true)
+            //finish()
+        }
         if (ActivityCompat.checkSelfPermission(this, Manifest.permission.BLUETOOTH_CONNECT) != PackageManager.PERMISSION_GRANTED ||
             ActivityCompat.checkSelfPermission(this, Manifest.permission.BLUETOOTH_SCAN) != PackageManager.PERMISSION_GRANTED ||
             ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
@@ -93,7 +125,10 @@ class MainActivity : AppCompatActivity(), OnBluetoothDeviceClickedListener {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             if (checkSelfPermission(Manifest.permission.BLUETOOTH_CONNECT) != PackageManager.PERMISSION_GRANTED) {
                 requestPermissions(
-                    arrayOf(Manifest.permission.BLUETOOTH_SCAN, Manifest.permission.BLUETOOTH_CONNECT, Manifest.permission.ACCESS_FINE_LOCATION),
+                    arrayOf(
+                        Manifest.permission.BLUETOOTH_SCAN,
+                        Manifest.permission.BLUETOOTH_CONNECT,
+                        Manifest.permission.ACCESS_FINE_LOCATION),
                     PERMISSIONS_REQUEST
                 )
             }
@@ -107,13 +142,38 @@ class MainActivity : AppCompatActivity(), OnBluetoothDeviceClickedListener {
     ) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
         when (requestCode) {
-            PERMISSIONS_REQUEST -> if (grantResults.size > 0
+            PERMISSIONS_REQUEST -> if (grantResults.isNotEmpty()
                 && grantResults[0] == PackageManager.PERMISSION_GRANTED
             ) {
-                Toast.makeText(this@MainActivity, "Permission Granted!", Toast.LENGTH_SHORT).show()
+                //Toast.makeText(this@MainActivity, "Permission Granted!", Toast.LENGTH_SHORT).show()
+                //check overlay permissions
+
+                //Check if the application has draw over other apps permission or not?
+                //This permission is by default available for API<23. But for API > 23
+                //you have to ask for the permission in runtime.
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M && !Settings.canDrawOverlays(this)) {
+                    val intent = Intent(
+                        Settings.ACTION_MANAGE_OVERLAY_PERMISSION,
+                        Uri.parse("package:$packageName")
+                    )
+                    startActivityForResult(intent, CODE_DRAW_OVER_OTHER_APP_PERMISSION)
+                } else {
+                    //changeStatus(true)
+                    //finish()
+                }
             } else {
                 Toast.makeText(this@MainActivity, "Permission Denied!", Toast.LENGTH_SHORT).show()
+                finish()
             }
+        }
+    }
+
+    private fun changeStatus(status: Boolean) {
+        if (status) {
+            //startForegroundService(service)
+            startService(service)
+        } else {
+            stopService(service)
         }
     }
 
@@ -139,17 +199,22 @@ class MainActivity : AppCompatActivity(), OnBluetoothDeviceClickedListener {
         Log.i("MainActivity", "initService()")
         if (mBluetoothLeService == null) {
             val gattServiceIntent = Intent(this, BluetoothLeService::class.java)
-            bindService(gattServiceIntent, mServiceConnection, BIND_AUTO_CREATE)
+            bindService(gattServiceIntent, mBtServiceConnection, BIND_AUTO_CREATE)
+        }
+        if (mOverlayService == null) {
+            service = Intent(this, OverlayService::class.java)
+            service!!.flags = Intent.FLAG_ACTIVITY_NEW_TASK
+            bindService(service, mOverlayServiceConnection, BIND_AUTO_CREATE)
         }
     }
 
     @SuppressLint("MissingPermission")
     private fun initData() {
-        mHandler = Handler()
+        mHandler = Handler(Looper.getMainLooper())
         val layoutManager = GridLayoutManager(this, 1)
         recyclerView!!.layoutManager = layoutManager
         mBluetoothDeviceAdapter = BluetoothDeviceAdapter(mBluetoothDeviceList, this)
-        recyclerView!!.setAdapter(mBluetoothDeviceAdapter)
+        recyclerView!!.adapter = mBluetoothDeviceAdapter
         swipeRefresh!!.setOnRefreshListener {
             //scan result does not return connected devices. save connected in list
             var connectedDeviceList = mBluetoothDeviceList.filter { key: BluetoothDeviceData -> key.isConnected } as MutableList<BluetoothDeviceData>
@@ -160,7 +225,7 @@ class MainActivity : AppCompatActivity(), OnBluetoothDeviceClickedListener {
         }
     }
 
-    private val mServiceConnection: ServiceConnection = object : ServiceConnection {
+    private val mBtServiceConnection: ServiceConnection = object : ServiceConnection {
 
         override fun onServiceConnected(componentName: ComponentName, service: IBinder) {
             mBluetoothLeService = (service as BluetoothLeService.LocalBinder).service
@@ -170,7 +235,20 @@ class MainActivity : AppCompatActivity(), OnBluetoothDeviceClickedListener {
         }
 
         override fun onServiceDisconnected(componentName: ComponentName) {
+            Log.i("MainActivity", "BtService disconnected")
             mBluetoothLeService = null
+        }
+    }
+
+    private val mOverlayServiceConnection: ServiceConnection = object : ServiceConnection {
+
+        override fun onServiceConnected(componentName: ComponentName, service: IBinder) {
+            mOverlayService = (service as OverlayService.LocalBinder).service
+            //mOverlayService!!.mBluetoothDeviceList = mBluetoothDeviceList
+        }
+
+        override fun onServiceDisconnected(componentName: ComponentName) {
+            mOverlayService = null
         }
     }
 
@@ -202,27 +280,32 @@ class MainActivity : AppCompatActivity(), OnBluetoothDeviceClickedListener {
 
         override fun onReceive(c: Context, intent: Intent) {
             val action = intent.action
-            val activity = c as MainActivity
             if (BluetoothLeService.ACTION_GATT_CONNECTED == action) {
                 Log.i("MainActivity", "ACTION_GATT_CONNECTED!!!")
                 showMsg("Connected device ..")
                 mConnectionState = BluetoothLeService.ACTION_GATT_CONNECTED
                 swipeRefresh!!.isRefreshing = false
                 //inputMessage()
-                setStatusConnected(activity.mLastConnectedDevice, true)
+                setStatusConnected(mLastConnectedDevice, true)
                 mBluetoothDeviceAdapter?.notifyDataSetChanged()
                 var db = Database.load(this@MainActivity)
-                mBluetoothDeviceList[activity.mLastConnectedDevice].mBluetoothDevice?.let {
+                mBluetoothDeviceList[mLastConnectedDevice].mBluetoothDevice?.let {
                     db.addDeviceInfo(it)
                     Database.store(db, this@MainActivity)
                 }
+                mOverlayService!!.addDevice(mBluetoothDeviceList[mLastConnectedDevice])
+                mOverlayService?.notifyDataSetChanged()
+                //findViewById<View>(R.id.root).rootView.visibility = View.GONE
+                Thread.sleep(1000);
+                startActivity(Intent(Intent.ACTION_MAIN).addCategory(Intent.CATEGORY_HOME))
             } else if (BluetoothLeService.ACTION_GATT_DISCONNECTED == action) {
                 Log.i("MainActivity", "ACTION_GATT_DISCONNECTED!!!")
                 showMsg("disconnected")
                 mConnectionState = BluetoothLeService.ACTION_GATT_DISCONNECTED
                 swipeRefresh!!.isRefreshing = false
-                setStatusConnected(activity.mLastConnectedDevice, false)
+                setStatusConnected(mLastConnectedDevice, false)
                 mBluetoothDeviceAdapter?.notifyDataSetChanged()
+                mOverlayService?.notifyDataSetChanged()
             } else if (BluetoothLeService.ACTION_GATT_SERVICES_DISCOVERED == action) {
                 mBluetoothLeService!!.supportedGattServices
             } else if (BluetoothLeService.ACTION_DATA_AVAILABLE == action) {
@@ -236,8 +319,9 @@ class MainActivity : AppCompatActivity(), OnBluetoothDeviceClickedListener {
                     }
                     Log.i("MainActivity", "Get string : $stringBuilder")
                     if(mBluetoothDeviceList.size>0) {
-                        setData(activity.mLastConnectedDevice, stringBuilder.toString())
+                        setData(mLastConnectedDevice, stringBuilder.toString())
                         mBluetoothDeviceAdapter?.notifyDataSetChanged()
+                        mOverlayService?.notifyDataSetChanged()
                     }
                 }
             }
@@ -350,12 +434,33 @@ class MainActivity : AppCompatActivity(), OnBluetoothDeviceClickedListener {
                 scanLeDevice(true)
             }
         }
+        if (requestCode == CODE_DRAW_OVER_OTHER_APP_PERMISSION) {
+            //Check if the permission is granted or not.
+            // Settings activity never returns proper value so instead check with following method
+            if (if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                    Settings.canDrawOverlays(this)
+                } else {
+                    true
+                }
+            ) {
+                //changeStatus(true)
+                //finish()
+            } else { //Permission is not available
+                Toast.makeText(
+                    this,
+                    "Draw over other app permission not available. Closing the application",
+                    Toast.LENGTH_SHORT
+                ).show()
+                finish()
+            }
+        }
         super.onActivityResult(requestCode, resultCode, data)
     }
 
     companion object {
 
         private const val PERMISSIONS_REQUEST = 2
+        private const val CODE_DRAW_OVER_OTHER_APP_PERMISSION = 1404
         private const val REQUEST_ENABLE_BT = 1
         private const val SCAN_PERIOD = (1000 * 3).toLong()
         var toast: Toast? = null
