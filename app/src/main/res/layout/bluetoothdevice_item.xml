@@ -16,14 +16,15 @@
             android:layout_width="60dp"
             android:layout_height="60dp"
             android:background="@color/cardview_light_background"
-            android:scaleType="fitStart" />
+            android:scaleType="fitStart"
+            android:contentDescription="Connected device" />
 
         <TextView
             android:id="@+id/device_name"
             android:layout_width="wrap_content"
             android:layout_height="22dp"
             android:layout_centerVertical="true"
-            android:layout_marginLeft="15dp"
+            android:layout_marginStart="15dp"
             android:layout_toEndOf="@id/device_image"
             android:textSize="16sp" />
 
@@ -32,7 +33,7 @@
             android:layout_width="wrap_content"
             android:layout_height="22dp"
             android:layout_centerVertical="true"
-            android:layout_marginLeft="15dp"
+            android:layout_marginStart="15dp"
             android:layout_toEndOf="@id/device_name"
             android:textSize="14sp" />
     </RelativeLayout>
