@@ -25,6 +25,7 @@ import androidx.recyclerview.widget.RecyclerView
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import com.rivchain.paramotor_monitor.R
 import org.rivchain.paramotor_monitor.db.Database
+import java.lang.NumberFormatException
 
 
 class MainActivity : AppCompatActivity(), OnBluetoothDeviceClickedListener {
@@ -319,9 +320,13 @@ class MainActivity : AppCompatActivity(), OnBluetoothDeviceClickedListener {
                     }
                     Log.i("MainActivity", "Get string : $stringBuilder")
                     if(mBluetoothDeviceList.size>0) {
-                        setData(mLastConnectedDevice, stringBuilder.toString())
-                        mBluetoothDeviceAdapter?.notifyDataSetChanged()
-                        mOverlayService?.notifyDataSetChanged()
+                        try {
+                            setData(mLastConnectedDevice, stringBuilder.toString())
+                            mBluetoothDeviceAdapter?.notifyDataSetChanged()
+                            mOverlayService?.notifyDataSetChanged()
+                        } catch (e: NumberFormatException){
+                            e.printStackTrace()
+                        }
                     }
                 }
             }
@@ -419,7 +424,9 @@ class MainActivity : AppCompatActivity(), OnBluetoothDeviceClickedListener {
 
     fun setData(mDevice: Int, data: String) {
         var newData = DeviceData()
-        newData.data = data
+        var sensorData  = data.split("|")
+        newData.rpm = Integer.parseInt(sensorData[0])
+        newData.temp = Integer.parseInt(sensorData[1])
         mBluetoothDeviceList[mDevice].deviceData = newData
     }
 

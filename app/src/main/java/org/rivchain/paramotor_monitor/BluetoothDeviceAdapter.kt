@@ -10,6 +10,7 @@ import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.cardview.widget.CardView
+import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.recyclerview.widget.RecyclerView
 import com.rivchain.paramotor_monitor.R
 
@@ -62,19 +63,28 @@ class BluetoothDeviceAdapter(
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         val device = mBluetoothDeviceList[position]
         if (TextUtils.isEmpty(device.mBluetoothDevice!!.name)) {
-            holder.deviceName.text = "device unknown"
+            holder.deviceName.text = "unknown device"
         } else {
             holder.deviceName.text = device.mBluetoothDevice!!.name
         }
         if (device.isConnected) {
             holder.deviceImage.setImageResource(R.drawable.bluetoothf_connected)
+            holder.deviceName.visibility = View.GONE
+            holder.deviceData.visibility = View.VISIBLE
         } else {
             holder.deviceImage.setImageResource(R.drawable.bluetoothf)
+            holder.deviceName.visibility = View.VISIBLE
+            holder.deviceData.visibility = View.GONE
         }
-        if (TextUtils.isEmpty(device.deviceData?.data)) {
-            holder.deviceData.text = "No data"
+        if (device.deviceData.rpm > 0) {
+            holder.deviceRpm.text = device.deviceData.rpm.toString()
         } else {
-            holder.deviceData.text = device.deviceData!!.data
+            holder.deviceRpm.text = ""
+        }
+        if (device.deviceData.temp > 0) {
+            holder.deviceTemp.text = device.deviceData.temp.toString()
+        } else {
+            holder.deviceTemp.text = ""
         }
     }
 
@@ -86,13 +96,17 @@ class BluetoothDeviceAdapter(
         var cardView: CardView
         var deviceImage: ImageView
         var deviceName: TextView
-        var deviceData: TextView
+        var deviceData: ConstraintLayout
+        var deviceRpm: TextView
+        var deviceTemp: TextView
 
         init {
             cardView = view as CardView
             deviceImage = view.findViewById<View>(R.id.device_image) as ImageView
             deviceName = view.findViewById<View>(R.id.device_name) as TextView
-            deviceData = view.findViewById<View>(R.id.device_data) as TextView
+            deviceData = view.findViewById<View>(R.id.device_data) as ConstraintLayout
+            deviceRpm = view.findViewById<View>(R.id.device_data_rpm) as TextView
+            deviceTemp = view.findViewById<View>(R.id.device_data_temp) as TextView
         }
     }
 

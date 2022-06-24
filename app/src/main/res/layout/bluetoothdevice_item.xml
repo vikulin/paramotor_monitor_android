@@ -6,7 +6,7 @@
     android:layout_margin="10dp"
     app:cardCornerRadius="6dp">
 
-    <RelativeLayout
+    <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/ll_bluetooth_item"
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
@@ -16,26 +16,78 @@
             android:layout_width="60dp"
             android:layout_height="60dp"
             android:background="@color/cardview_light_background"
+            android:contentDescription="Connected device"
             android:scaleType="fitStart"
-            android:contentDescription="Connected device" />
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
 
         <TextView
             android:id="@+id/device_name"
             android:layout_width="wrap_content"
-            android:layout_height="22dp"
-            android:layout_centerVertical="true"
+            android:layout_height="wrap_content"
             android:layout_marginStart="15dp"
-            android:layout_toEndOf="@id/device_image"
-            android:textSize="16sp" />
-
-        <TextView
+            android:textSize="22sp"
+            android:gravity="center_vertical"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toEndOf="@id/device_image"
+            app:layout_constraintTop_toTopOf="parent"
+            android:text="12123123"/>
+        <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/device_data"
             android:layout_width="wrap_content"
-            android:layout_height="22dp"
-            android:layout_centerVertical="true"
-            android:layout_marginStart="15dp"
-            android:layout_toEndOf="@id/device_name"
-            android:textSize="14sp" />
-    </RelativeLayout>
+            android:layout_height="wrap_content"
+            android:layout_marginStart="5dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toEndOf="@id/device_name"
+            app:layout_constraintTop_toTopOf="parent">
+            <TextView
+                android:id="@+id/device_data_rpm"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="5dp"
+                android:textSize="24sp"
+                android:textStyle="bold"
+                android:textColor="@color/cardview_dark_background"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintRight_toLeftOf="@+id/device_data_rpm_label"
+                android:text="12123123"
+                android:maxLength="5"/>
+            <TextView
+                android:id="@+id/device_data_rpm_label"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textSize="22sp"
+                android:textColor="@color/cardview_dark_background"
+                app:layout_constraintStart_toEndOf="@id/device_data_rpm"
+                app:layout_constraintBaseline_toBaselineOf="@+id/device_data_rpm"
+                android:text="rpm"/>
+            <View
+                android:id="@+id/separator"
+                android:layout_width="15dp"
+                android:layout_height="match_parent"
+                app:layout_constraintStart_toEndOf="@id/device_data_rpm_label"/>
+            <TextView
+                android:id="@+id/device_data_temp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textSize="24sp"
+                android:textStyle="bold"
+                android:textColor="@color/cardview_dark_background"
+                app:layout_constraintStart_toEndOf="@+id/separator"
+                android:text="121"
+                app:layout_constraintBaseline_toBaselineOf="@+id/device_data_rpm"
+                android:maxLength="3"/>
+            <TextView
+                android:id="@+id/device_data_temp_label"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textSize="22sp"
+                android:textColor="@color/cardview_dark_background"
+                app:layout_constraintStart_toEndOf="@id/device_data_temp"
+                app:layout_constraintBaseline_toBaselineOf="@+id/device_data_rpm"
+                android:text="°C"/>
+        </androidx.constraintlayout.widget.ConstraintLayout>
+    </androidx.constraintlayout.widget.ConstraintLayout>
 
 </androidx.cardview.widget.CardView>

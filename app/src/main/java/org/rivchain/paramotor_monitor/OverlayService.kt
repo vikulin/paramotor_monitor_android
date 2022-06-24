@@ -11,13 +11,12 @@ import android.os.Build
 import android.os.IBinder
 import android.util.Log
 import android.view.*
-import android.view.View.INVISIBLE
 import android.view.View.OnTouchListener
 import android.widget.RelativeLayout
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.rivchain.paramotor_monitor.R
-import org.rivchain.paramotor_monitor.db.Database
+import java.lang.NumberFormatException
 
 /**
  * Created by Vadym Vikulin on 6/23/22.
@@ -120,14 +119,24 @@ class OverlayService : Service() {
                     }
                     Log.i("OverlayService", "Get string : $stringBuilder")
                     if(mBluetoothDeviceList.size>0) {
-                        var newData = DeviceData()
-                        newData.data = stringBuilder.toString()
-                        mBluetoothDeviceList.get(0).deviceData = newData
-                        notifyDataSetChanged()
+                        try {
+                            setData(0, stringBuilder.toString())
+                            notifyDataSetChanged()
+                        } catch (e: NumberFormatException){
+                            e.printStackTrace()
+                        }
                     }
                 }
             }
         }
+    }
+
+    fun setData(mDevice: Int, data: String) {
+        var newData = DeviceData()
+        var sensorData  = data.split("|")
+        newData.rpm = Integer.parseInt(sensorData[0])
+        newData.temp = Integer.parseInt(sensorData[1])
+        mBluetoothDeviceList[mDevice].deviceData = newData
     }
 
     fun addDevice(device: BluetoothDeviceData){

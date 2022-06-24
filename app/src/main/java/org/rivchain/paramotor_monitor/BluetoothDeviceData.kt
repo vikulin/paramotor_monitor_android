@@ -8,5 +8,5 @@ class BluetoothDeviceData {
 
     var mBluetoothDevice: BluetoothDevice? = null
 
-    var deviceData: DeviceData? = null
+    var deviceData: DeviceData = DeviceData()
 }
