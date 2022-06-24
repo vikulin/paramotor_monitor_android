@@ -419,7 +419,9 @@ class MainActivity : AppCompatActivity(), OnBluetoothDeviceClickedListener {
     }
 
     fun setStatusConnected(mDevice: Int, status: Boolean) {
-        mBluetoothDeviceList[mDevice].isConnected = status
+        if(mBluetoothDeviceList.size > 0) {
+            mBluetoothDeviceList[mDevice].isConnected = status
+        }
     }
 
     fun setData(mDevice: Int, data: String) {
