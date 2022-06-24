@@ -104,7 +104,7 @@ class MainActivity : AppCompatActivity(), OnBluetoothDeviceClickedListener {
             )
             startActivityForResult(intent, CODE_DRAW_OVER_OTHER_APP_PERMISSION)
         } else {
-            //changeStatus(true)
+            changeStatus(true)
             //finish()
         }
         if (ActivityCompat.checkSelfPermission(this, Manifest.permission.BLUETOOTH_CONNECT) != PackageManager.PERMISSION_GRANTED ||
@@ -119,7 +119,7 @@ class MainActivity : AppCompatActivity(), OnBluetoothDeviceClickedListener {
     public override fun onPause() {
         super.onPause()
         Log.i("MainActivity", "unregisterReceiver()")
-        unregisterReceiver(mGattUpdateReceiver)
+        //unregisterReceiver(mGattUpdateReceiver)
     }
 
     private fun requestPermissions() {
@@ -159,7 +159,7 @@ class MainActivity : AppCompatActivity(), OnBluetoothDeviceClickedListener {
                     )
                     startActivityForResult(intent, CODE_DRAW_OVER_OTHER_APP_PERMISSION)
                 } else {
-                    //changeStatus(true)
+                    changeStatus(true)
                     //finish()
                 }
             } else {
@@ -450,7 +450,7 @@ class MainActivity : AppCompatActivity(), OnBluetoothDeviceClickedListener {
                     true
                 }
             ) {
-                //changeStatus(true)
+                changeStatus(true)
                 //finish()
             } else { //Permission is not available
                 Toast.makeText(

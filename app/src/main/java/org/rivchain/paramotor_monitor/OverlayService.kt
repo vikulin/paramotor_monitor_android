@@ -104,7 +104,10 @@ class OverlayService : Service() {
                 Log.i("OverlayService", "ACTION_GATT_CONNECTED!!!")
             } else if (BluetoothLeService.ACTION_GATT_DISCONNECTED == action) {
                 Log.i("OverlayService", "ACTION_GATT_DISCONNECTED!!!")
-                notifyDataSetChanged()
+                if(mBluetoothDeviceList.size > 0) {
+                    mBluetoothDeviceList.removeAt(0)
+                    notifyDataSetChanged()
+                }
             } else if (BluetoothLeService.ACTION_GATT_SERVICES_DISCOVERED == action) {
                 //nothing todo
             } else if (BluetoothLeService.ACTION_DATA_AVAILABLE == action) {
@@ -118,7 +121,7 @@ class OverlayService : Service() {
                         stringBuilder.append(b)
                     }
                     Log.i("OverlayService", "Get string : $stringBuilder")
-                    if(mBluetoothDeviceList.size>0) {
+                    if(mBluetoothDeviceList.size > 0) {
                         try {
                             setData(0, stringBuilder.toString())
                             notifyDataSetChanged()

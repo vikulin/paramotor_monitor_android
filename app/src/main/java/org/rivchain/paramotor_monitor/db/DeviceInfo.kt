@@ -2,7 +2,6 @@ package org.rivchain.paramotor_monitor.db
 
 import android.annotation.SuppressLint
 import android.bluetooth.BluetoothDevice
-import org.json.JSONArray
 import org.json.JSONException
 import org.json.JSONObject
 
@@ -20,7 +19,6 @@ class DeviceInfo {
     }
 
     var name: String? = null
-
     var address: String? = null
 
     companion object {
@@ -28,7 +26,6 @@ class DeviceInfo {
         @Throws(JSONException::class)
         fun exportJSON(deviceInfo: DeviceInfo): JSONObject {
             val `object` = JSONObject()
-            val array = JSONArray()
             `object`.put("name", deviceInfo.name)
             `object`.put("address", deviceInfo.address)
             return `object`
