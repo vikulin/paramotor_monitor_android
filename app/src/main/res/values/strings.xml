@@ -1,5 +1,7 @@
 <resources>
     <string name="app_name">Paramotor Monitor</string>
+    <string name="report_dialog_text">Sorry, the application crashed.</string>
+    <string name="report_dialog_comment">Please describe what were you doing when the app crashed:</string>
 
 
     <!-- Scan -->

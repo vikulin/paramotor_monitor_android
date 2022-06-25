@@ -89,12 +89,12 @@ class BluetoothLeService : Service() {
     private val mGattCallback: BluetoothGattCallback = object : BluetoothGattCallback() {
         override fun onConnectionStateChange(gatt: BluetoothGatt, status: Int, newState: Int) {
             if (newState == BluetoothProfile.STATE_CONNECTED) {
-                broadcastUpdate(ACTION_GATT_CONNECTED)
+                broadcastUpdate(ACTION_GATT_CONNECTED, gatt.device.address)
                 Log.i("BluetoothLeService", "Connected to GATT server.")
                 mBluetoothGatt!!.discoverServices()
                 Log.i("BluetoothLeService", "Attempting to start service discovery:")
             } else if (newState == BluetoothProfile.STATE_DISCONNECTED) {
-                broadcastUpdate(ACTION_GATT_DISCONNECTED)
+                broadcastUpdate(ACTION_GATT_DISCONNECTED, gatt.device.address)
                 Log.w("BluetoothLeService", "Disconnected from GATT server.")
             }
         }
@@ -114,7 +114,7 @@ class BluetoothLeService : Service() {
         ) {
             if (status == BluetoothGatt.GATT_SUCCESS) {
                 Log.i("BluetoothLeService", "onCharacteristicRead()")
-                broadcastUpdate(ACTION_DATA_AVAILABLE, characteristic)
+                broadcastUpdate(ACTION_DATA_AVAILABLE, characteristic, gatt.device.address)
             }
         }
 
@@ -123,7 +123,7 @@ class BluetoothLeService : Service() {
             characteristic: BluetoothGattCharacteristic
         ) {
             Log.i("BluetoothLeService", "onCharacteristicChanged()")
-            broadcastUpdate(ACTION_DATA_AVAILABLE, characteristic)
+            broadcastUpdate(ACTION_DATA_AVAILABLE, characteristic, gatt.device.address)
         }
 
         override fun onCharacteristicWrite(
@@ -140,13 +140,20 @@ class BluetoothLeService : Service() {
         sendBroadcast(intent)
     }
 
+    private fun broadcastUpdate(action: String, address: String?) {
+        val intent = Intent(action)
+        intent.putExtra(EXTRA_DEVICE_ADDRESS, address)
+        sendBroadcast(intent)
+    }
+
     private fun broadcastUpdate(
         action: String,
-        characteristic: BluetoothGattCharacteristic
+        characteristic: BluetoothGattCharacteristic, address: String?
     ) {
         val intent = Intent(action)
         val data = characteristic.value
         intent.putExtra(EXTRA_DATA, data)
+        intent.putExtra(EXTRA_DEVICE_ADDRESS, address)
         sendBroadcast(intent)
     }
 
@@ -192,6 +199,7 @@ class BluetoothLeService : Service() {
         const val ACTION_GATT_SERVICES_DISCOVERED = "action_gatt_services_discovered"
         const val ACTION_DATA_AVAILABLE = "action_data_available"
         const val EXTRA_DATA = "extra_data"
+        const val EXTRA_DEVICE_ADDRESS = "extra_device_address"
         val UUID_NOTIFY = UUID.fromString("beb5483e-36e1-4688-b7f5-ea07361b26a8")
     }
 }
