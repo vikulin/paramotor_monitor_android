@@ -1,6 +1,7 @@
 package org.rivchain.paramotor_monitor
 
 import android.app.Service
+import android.bluetooth.BluetoothDevice
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
@@ -143,11 +144,20 @@ class OverlayService : Service() {
     }
 
     fun addDevice(device: BluetoothDeviceData){
-        if(mBluetoothDeviceList.indexOf(device) < 0) {
+        if(indexOf(device.mBluetoothDevice) < 0) {
             mBluetoothDeviceList.add(0, device)
             topParams!!.height = mBluetoothDeviceList.size * ScreenUtils.convertDpToPx(this@OverlayService, 85)
             windowManager!!.updateViewLayout(topView, topParams)
         }
+    }
+
+    fun indexOf(device: BluetoothDevice?): Int {
+        for ((i, bluetoothDeviceData) in mBluetoothDeviceList.withIndex()) {
+            if (bluetoothDeviceData.mBluetoothDevice!!.address.equals(device!!.address)) {
+                return i
+            }
+        }
+        return -1
     }
 
     fun notifyDataSetChanged(){
