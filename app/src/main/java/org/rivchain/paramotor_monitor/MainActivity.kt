@@ -73,12 +73,14 @@ class MainActivity : AppCompatActivity(), OnBluetoothDeviceClickedListener {
         val connectedDevices =
             bluetoothManager.getConnectedDevices(BluetoothProfile.GATT_SERVER)
         if(connectedDevices.size > 0){
-            var bluetoothDeviceData = BluetoothDeviceData()
-            bluetoothDeviceData.mBluetoothDevice = connectedDevices[0]
-            if(!contains(bluetoothDeviceData.mBluetoothDevice)){
-                bluetoothDeviceData.isConnected = true
-                bluetoothDeviceData.deviceData = DeviceData()
-                mBluetoothDeviceList.add(bluetoothDeviceData)
+            for(cd in connectedDevices) {
+                if (!contains(cd)) {
+                    val bluetoothDeviceData = BluetoothDeviceData()
+                    bluetoothDeviceData.mBluetoothDevice = cd
+                    bluetoothDeviceData.isConnected = true
+                    bluetoothDeviceData.deviceData = DeviceData()
+                    mBluetoothDeviceList.add(bluetoothDeviceData)
+                }
             }
             mBluetoothDeviceAdapter!!.notifyDataSetChanged()
         }
