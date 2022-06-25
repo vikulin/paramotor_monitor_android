@@ -62,13 +62,11 @@ class MainActivity : AppCompatActivity(), OnBluetoothDeviceClickedListener {
 
     override fun onSaveInstanceState(outState: Bundle) {
         super.onSaveInstanceState(outState)
-        //outState.putInt("LAST_CONNECTED_DEVICE", mLastConnectedDevice)
     }
 
     @SuppressLint("MissingPermission")
     override fun onRestoreInstanceState(savedInstanceState: Bundle) {
         super.onRestoreInstanceState(savedInstanceState)
-        //mLastConnectedDevice = savedInstanceState.getInt("LAST_CONNECTED_DEVICE", 0)
         initData()
         //initService()
         val bluetoothManager = getSystemService(BLUETOOTH_SERVICE) as BluetoothManager
@@ -323,14 +321,14 @@ class MainActivity : AppCompatActivity(), OnBluetoothDeviceClickedListener {
                 val data = intent.getByteArrayExtra(BluetoothLeService.EXTRA_DATA)
                 val address = intent.getStringExtra(BluetoothLeService.EXTRA_DEVICE_ADDRESS)
                 //showMsg("Got string : " + data?.let { String(it) })
-                if (data != null && data.isNotEmpty()) {
+                if (data != null && data.isNotEmpty() && address != null) {
                     val stringBuilder = StringBuilder(data.size)
                     for (byteChar in data) {
                         val b = Char(byteChar.toUShort())
                         stringBuilder.append(b)
                     }
                     Log.i("MainActivity", "Get string : $stringBuilder")
-                    if(mBluetoothDeviceList.size > 0 && address != null) {
+                    if(mBluetoothDeviceList.size > 0) {
                         try {
                             setData(address, stringBuilder.toString())
                             mBluetoothDeviceAdapter?.notifyDataSetChanged()
@@ -401,8 +399,6 @@ class MainActivity : AppCompatActivity(), OnBluetoothDeviceClickedListener {
                 bluetoothDeviceData.mBluetoothDevice = device
                 mBluetoothDeviceList.add(bluetoothDeviceData)
                 mBluetoothDeviceAdapter?.notifyDataSetChanged()
-            } else {
-                System.out.println();
             }
         }
     }
@@ -416,19 +412,8 @@ class MainActivity : AppCompatActivity(), OnBluetoothDeviceClickedListener {
         return false
     }
 
-    fun indexOf(device: BluetoothDevice?): Int {
-        for ((i, bluetoothDeviceData) in mBluetoothDeviceList.withIndex()) {
-            if (bluetoothDeviceData.mBluetoothDevice!!.address.equals(device!!.address)) {
-                return i
-            }
-        }
-        return -1
-    }
-
     fun setStatusConnected(address: String, status: Boolean) {
-        //if(mBluetoothDeviceList.size > 0) {
-            mBluetoothDeviceList.firstOrNull { it.mBluetoothDevice!!.address.equals(address) }?.isConnected = status
-        //}
+        mBluetoothDeviceList.firstOrNull { it.mBluetoothDevice!!.address.equals(address) }?.isConnected = status
     }
 
     fun setData(address: String, data: String) {
@@ -436,7 +421,7 @@ class MainActivity : AppCompatActivity(), OnBluetoothDeviceClickedListener {
         var sensorData  = data.split("|")
         newData.rpm = Integer.parseInt(sensorData[0])
         newData.temp = Integer.parseInt(sensorData[1])
-        mBluetoothDeviceList.first { it.mBluetoothDevice!!.address.equals(address) }.deviceData = newData
+        mBluetoothDeviceList.firstOrNull { it.mBluetoothDevice!!.address.equals(address) }?.deviceData = newData
     }
 
     @Deprecated("Deprecated in Java")

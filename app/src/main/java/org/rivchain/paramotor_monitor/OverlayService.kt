@@ -113,9 +113,10 @@ class OverlayService : Service() {
                 //nothing todo
             } else if (BluetoothLeService.ACTION_DATA_AVAILABLE == action) {
                 val data = intent.getByteArrayExtra(BluetoothLeService.EXTRA_DATA)
+                val address = intent.getStringExtra(BluetoothLeService.EXTRA_DEVICE_ADDRESS)
                 //showMsg("Got string : " + data?.let { String(it) })
                 Log.i("OverlayService", "Data!")
-                if (data != null && data.size > 0) {
+                if (data != null && data.isNotEmpty() && address != null) {
                     val stringBuilder = StringBuilder(data.size)
                     for (byteChar in data) {
                         val b = Char(byteChar.toUShort())
@@ -124,7 +125,7 @@ class OverlayService : Service() {
                     Log.i("OverlayService", "Get string : $stringBuilder")
                     if(mBluetoothDeviceList.size > 0) {
                         try {
-                            setData(0, stringBuilder.toString())
+                            setData(address, stringBuilder.toString())
                             notifyDataSetChanged()
                         } catch (e: NumberFormatException){
                             e.printStackTrace()
@@ -135,12 +136,12 @@ class OverlayService : Service() {
         }
     }
 
-    fun setData(mDevice: Int, data: String) {
+    fun setData(address: String, data: String) {
         var newData = DeviceData()
         var sensorData  = data.split("|")
         newData.rpm = Integer.parseInt(sensorData[0])
         newData.temp = Integer.parseInt(sensorData[1])
-        mBluetoothDeviceList[mDevice].deviceData = newData
+        mBluetoothDeviceList.firstOrNull { it.mBluetoothDevice!!.address.equals(address) }?.deviceData = newData
     }
 
     fun addDevice(device: BluetoothDeviceData){
