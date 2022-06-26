@@ -13,14 +13,19 @@ class BluetoothDeviceData {
     var availableSensorId = setOf<Int>()
 
     companion object {
-        var sensorId = linkedSetOf(
+        var sensorId = listOf(
             "459e",//RPM
             "2a1c",//tc
             "8fcc"//fl
         )
-        var label = linkedSetOf(
+        var label = listOf(
             "RPM",//RPM
             "°C",//tc
+            "%"//fl
+        )
+        var icon = listOf(
+            "RPM",//RPM
+            "tc_256x256",//tc
             "%"//fl
         )
         var descryption = linkedSetOf(

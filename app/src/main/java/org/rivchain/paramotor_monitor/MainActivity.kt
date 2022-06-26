@@ -28,7 +28,6 @@ import com.rivchain.paramotor_monitor.R
 import org.rivchain.paramotor_monitor.db.Database
 import java.lang.NumberFormatException
 
-
 class MainActivity : AppCompatActivity(), OnBluetoothDeviceClickedListener {
 
     private var mConnectionState = BluetoothLeService.ACTION_GATT_DISCONNECTED

@@ -15,7 +15,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.rivchain.paramotor_monitor.R
 
 /**
- * Created by WGH on 2017/4/10.
+ * Created by Vadym Vikulin
  */
 class BluetoothDeviceAdapter(
     val mBluetoothDeviceList: MutableList<BluetoothDeviceData>,
@@ -38,18 +38,18 @@ class BluetoothDeviceAdapter(
             mContext = parent.context
         }
         val view =
-            LayoutInflater.from(mContext).inflate(R.layout.bluetoothdevice_item, parent, false)
+            LayoutInflater.from(mContext).inflate(R.layout.bt_device_item, parent, false)
         val holder = ViewHolder(view)
         holder.cardView.setOnClickListener(View.OnClickListener {
-            if (holder.absoluteAdapterPosition < 0 || mBluetoothDeviceList.size == 0) {
+            if (holder.bindingAdapterPosition < 0 || mBluetoothDeviceList.size == 0) {
                 Log.e(
                     "MyBluetoothDeviceAd",
-                    "holder.getAdapterPosition() : " + holder.absoluteAdapterPosition
+                    "holder.getAdapterPosition() : " + holder.bindingAdapterPosition
                 )
                 return@OnClickListener
             }
-            val device = mBluetoothDeviceList[holder.absoluteAdapterPosition]
             BluetoothScan.stopScan()
+            val device = mBluetoothDeviceList[holder.bindingAdapterPosition]
             mBluetoothClickListener.onBluetoothDeviceClicked(device)
         })
         holder.cardView.setOnLongClickListener {
@@ -70,16 +70,19 @@ class BluetoothDeviceAdapter(
         if (device.isConnected) {
             holder.deviceImage.setImageResource(R.drawable.bluetoothf_connected)
             holder.deviceName.visibility = View.GONE
-            holder.deviceData.visibility = View.VISIBLE
+            holder.sensorData.visibility = View.VISIBLE
         } else {
             holder.deviceImage.setImageResource(R.drawable.bluetoothf)
             holder.deviceName.visibility = View.VISIBLE
-            holder.deviceData.visibility = View.GONE
+            holder.sensorData.visibility = View.GONE
         }
         if(device.availableSensorId.isNotEmpty()){
-            holder.deviceRpm.text = (device.deviceData.sensorData as Array<Int>)[0].toString()
-            holder.deviceTemp.text = (device.deviceData.sensorData as Array<Int>)[1].toString()
-            //holder.deviceFl.text = device.deviceData.sensorData[2].toString()
+            var sensorData = (device.deviceData.sensorData as Array<Int>)
+            if(sensorData.isNotEmpty()) {
+                (holder.sensorData.adapter as SensorDataAdapter).updateSensorData(sensorData)
+                (holder.sensorData.adapter as SensorDataAdapter).updateAvailableSensors(device.availableSensorId)
+                (holder.sensorData.adapter as SensorDataAdapter).notifyDataSetChanged()
+            }
         }
     }
 
@@ -87,21 +90,18 @@ class BluetoothDeviceAdapter(
         return mBluetoothDeviceList.size
     }
 
-    class ViewHolder(view: View) : RecyclerView.ViewHolder(view) {
+    inner class ViewHolder(view: View) : RecyclerView.ViewHolder(view) {
         var cardView: CardView
         var deviceImage: ImageView
         var deviceName: TextView
-        var deviceData: ConstraintLayout
-        var deviceRpm: TextView
-        var deviceTemp: TextView
+        var sensorData: RecyclerView
 
         init {
             cardView = view as CardView
             deviceImage = view.findViewById<View>(R.id.device_image) as ImageView
             deviceName = view.findViewById<View>(R.id.device_name) as TextView
-            deviceData = view.findViewById<View>(R.id.device_data) as ConstraintLayout
-            deviceRpm = view.findViewById<View>(R.id.device_data_rpm) as TextView
-            deviceTemp = view.findViewById<View>(R.id.device_data_temp) as TextView
+            sensorData = view.findViewById<View>(R.id.sensor_data) as RecyclerView
+            sensorData.adapter = SensorDataAdapter(this@BluetoothDeviceAdapter.mContext, mutableListOf(), mutableListOf())
         }
     }
 
