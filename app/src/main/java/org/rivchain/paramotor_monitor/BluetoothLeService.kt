@@ -5,6 +5,7 @@ import android.app.Service
 import android.bluetooth.*
 import android.content.Intent
 import android.os.Binder
+import android.os.Build
 import android.os.IBinder
 import android.util.Log
 import java.util.*
@@ -133,6 +134,15 @@ class BluetoothLeService : Service() {
             Log.i("BluetoothLeService", "onCharacteristicWrite()")
             super.onCharacteristicWrite(gatt, characteristic, status)
         }
+
+        override fun onMtuChanged(gatt: BluetoothGatt?, mtu: Int, status: Int) {
+            if (status == BluetoothGatt.GATT_SUCCESS) {
+                Log.i("BluetoothLeService", "onMtuChanged() success. New MTU: $mtu")
+            } else {
+                Log.i("BluetoothLeService", "onMtuChanged() failed. MTU: $mtu")
+            }
+            super.onMtuChanged(gatt, mtu, status)
+        }
     }
 
     private fun broadcastUpdate(action: String) {
@@ -167,9 +177,10 @@ class BluetoothLeService : Service() {
             for (gattService in gattServices) {
                 val gattCharacteristics = gattService.characteristics
                 for (gattCharacteristic in gattCharacteristics) {
+                    val serviceUuid = gattService.uuid
                     val uuid = gattCharacteristic.uuid.toString()
-                    Log.i("BluetoothLeService", "uuid : $uuid")
-                    if (uuid.equals(UUID_NOTIFY.toString())) {
+                    Log.i("BluetoothLeService", "uuid : $uuid/service: $serviceUuid")
+                    if (uuid.equals(UUID_NOTIFY.toString(), ignoreCase = true)) {
                         mNotifyCharacteristic = gattCharacteristic
                         mBluetoothGatt!!.setCharacteristicNotification(gattCharacteristic, true)
                         Log.i(

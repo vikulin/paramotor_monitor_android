@@ -52,6 +52,7 @@ dependencies {
     implementation "androidx.core:core-ktx:1.8.0"
     implementation 'com.android.support:multidex:1.0.3'
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
+    implementation 'com.google.code.gson:gson:2.9.0'
 
     annotationProcessor "com.github.hotchemi:permissionsdispatcher-processor:3.0.1"
     testImplementation 'junit:junit:4.13.2'

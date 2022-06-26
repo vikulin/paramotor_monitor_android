@@ -23,6 +23,7 @@ import androidx.core.app.ActivityCompat
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+import com.google.gson.Gson
 import com.rivchain.paramotor_monitor.R
 import org.rivchain.paramotor_monitor.db.Database
 import java.lang.NumberFormatException
@@ -39,7 +40,7 @@ class MainActivity : AppCompatActivity(), OnBluetoothDeviceClickedListener {
     private var mHandler: Handler? = null
     private var mBluetoothLeService: BluetoothLeService? = null
     private var mOverlayService: OverlayService? = null
-    //private var mLastConnectedDevice = 0
+    private var gson = Gson()
 
     /*Overlay infrastructure*/
     private var service: Intent? = null
@@ -422,9 +423,10 @@ class MainActivity : AppCompatActivity(), OnBluetoothDeviceClickedListener {
 
     fun setData(address: String, data: String) {
         var newData = DeviceData()
-        var sensorData  = data.split("|")
-        newData.rpm = Integer.parseInt(sensorData[0])
-        newData.temp = Integer.parseInt(sensorData[1])
+        val sensorData = gson.fromJson(data, Array<Int>::class.java)
+        newData.rpm = sensorData[0]
+        newData.tc = sensorData[1]
+        newData.fl = sensorData[2]
         mBluetoothDeviceList.firstOrNull { it.mBluetoothDevice!!.address.equals(address, ignoreCase = true) }?.deviceData = newData
     }
 

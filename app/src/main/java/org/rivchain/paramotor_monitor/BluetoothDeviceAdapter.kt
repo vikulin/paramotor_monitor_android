@@ -41,7 +41,7 @@ class BluetoothDeviceAdapter(
             LayoutInflater.from(mContext).inflate(R.layout.bluetoothdevice_item, parent, false)
         val holder = ViewHolder(view)
         holder.cardView.setOnClickListener(View.OnClickListener {
-            if (holder.absoluteAdapterPosition < 0) {
+            if (holder.absoluteAdapterPosition < 0 || mBluetoothDeviceList.size == 0) {
                 Log.e(
                     "MyBluetoothDeviceAd",
                     "holder.getAdapterPosition() : " + holder.absoluteAdapterPosition
@@ -81,8 +81,8 @@ class BluetoothDeviceAdapter(
         } else {
             holder.deviceRpm.text = ""
         }
-        if (device.deviceData.temp > 0) {
-            holder.deviceTemp.text = device.deviceData.temp.toString()
+        if (device.deviceData.tc > 0) {
+            holder.deviceTemp.text = device.deviceData.tc.toString()
         } else {
             holder.deviceTemp.text = ""
         }

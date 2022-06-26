@@ -16,6 +16,7 @@ import android.view.View.OnTouchListener
 import android.widget.RelativeLayout
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.google.gson.Gson
 import com.rivchain.paramotor_monitor.R
 import java.lang.NumberFormatException
 
@@ -30,8 +31,8 @@ class OverlayService : Service() {
     private var windowManager: WindowManager? = null
     private var topView: RelativeLayout? = null
     private var deviceListView: RecyclerView? = null
-    //private var topGrab: View? = null
     private val mBinder: IBinder = LocalBinder()
+    private var gson = Gson()
 
     override fun onBind(intent: Intent): IBinder {
         return mBinder
@@ -146,9 +147,10 @@ class OverlayService : Service() {
 
     fun setData(address: String, data: String) {
         var newData = DeviceData()
-        var sensorData  = data.split("|")
-        newData.rpm = Integer.parseInt(sensorData[0])
-        newData.temp = Integer.parseInt(sensorData[1])
+        val sensorData = gson.fromJson(data, Array<Int>::class.java)
+        newData.rpm = sensorData[0]
+        newData.tc = sensorData[1]
+        newData.fl = sensorData[2]
         mBluetoothDeviceList.firstOrNull { it.mBluetoothDevice!!.address.equals(address, ignoreCase = true) }?.deviceData = newData
     }
 
