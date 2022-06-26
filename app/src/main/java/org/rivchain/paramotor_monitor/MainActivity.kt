@@ -107,7 +107,7 @@ class MainActivity : AppCompatActivity(), OnBluetoothDeviceClickedListener {
             )
             startActivityForResult(intent, CODE_DRAW_OVER_OTHER_APP_PERMISSION)
         } else {
-            changeStatus(true)
+            //changeStatus(true)
             //finish()
         }
         if (ActivityCompat.checkSelfPermission(this, Manifest.permission.BLUETOOTH_CONNECT) != PackageManager.PERMISSION_GRANTED ||
@@ -117,6 +117,7 @@ class MainActivity : AppCompatActivity(), OnBluetoothDeviceClickedListener {
             return
         }
         scanLeDevice(true)
+        mOverlayService?.hide()
     }
 
     public override fun onPause() {
@@ -300,7 +301,8 @@ class MainActivity : AppCompatActivity(), OnBluetoothDeviceClickedListener {
                             db.addDeviceInfo(it)
                             Database.store(db, this@MainActivity)
                         }
-                    mOverlayService!!.addDevice(d)
+                    mOverlayService?.show()
+                    mOverlayService?.addDevice(d)
                     mOverlayService?.notifyDataSetChanged()
                     //findViewById<View>(R.id.root).rootView.visibility = View.GONE
                     Thread.sleep(1000);

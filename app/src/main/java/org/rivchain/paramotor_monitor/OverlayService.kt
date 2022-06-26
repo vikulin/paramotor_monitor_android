@@ -87,6 +87,14 @@ class OverlayService : Service() {
         windowManager!!.addView(topView, topParams)
     }
 
+    fun show(){
+        topView?.visibility=View.VISIBLE
+    }
+
+    fun hide(){
+        topView?.visibility=View.GONE
+    }
+
     private fun initReceiver() {
         Log.i("OverlayService", "initReceiver()")
         val intentFilter = IntentFilter()
