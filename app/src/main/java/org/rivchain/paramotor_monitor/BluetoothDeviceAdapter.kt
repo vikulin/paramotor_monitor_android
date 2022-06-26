@@ -76,15 +76,10 @@ class BluetoothDeviceAdapter(
             holder.deviceName.visibility = View.VISIBLE
             holder.deviceData.visibility = View.GONE
         }
-        if (device.deviceData.rpm > 0) {
-            holder.deviceRpm.text = device.deviceData.rpm.toString()
-        } else {
-            holder.deviceRpm.text = ""
-        }
-        if (device.deviceData.tc > 0) {
-            holder.deviceTemp.text = device.deviceData.tc.toString()
-        } else {
-            holder.deviceTemp.text = ""
+        if(device.availableSensorId.isNotEmpty()){
+            holder.deviceRpm.text = (device.deviceData.sensorData as Array<Int>)[0].toString()
+            holder.deviceTemp.text = (device.deviceData.sensorData as Array<Int>)[1].toString()
+            //holder.deviceFl.text = device.deviceData.sensorData[2].toString()
         }
     }
 

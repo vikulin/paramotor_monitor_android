@@ -1,5 +1,6 @@
 package org.rivchain.paramotor_monitor
 
+import android.annotation.SuppressLint
 import android.app.Service
 import android.bluetooth.BluetoothDevice
 import android.content.BroadcastReceiver
@@ -145,13 +146,15 @@ class OverlayService : Service() {
         }
     }
 
+    @SuppressLint("MissingPermission")
     fun setData(address: String, data: String) {
-        var newData = DeviceData()
         val sensorData = gson.fromJson(data, Array<Int>::class.java)
-        newData.rpm = sensorData[0]
-        newData.tc = sensorData[1]
-        newData.fl = sensorData[2]
-        mBluetoothDeviceList.firstOrNull { it.mBluetoothDevice!!.address.equals(address, ignoreCase = true) }?.deviceData = newData
+        var device = mBluetoothDeviceList.firstOrNull { it.mBluetoothDevice!!.address.equals(address, ignoreCase = true) }
+        if(device != null) {
+            var newData = DeviceData()
+            newData.sensorData = sensorData
+            device.deviceData = newData
+        }
     }
 
     fun addDevice(device: BluetoothDeviceData){

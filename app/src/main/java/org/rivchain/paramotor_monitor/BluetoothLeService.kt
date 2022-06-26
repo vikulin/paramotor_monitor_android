@@ -5,7 +5,6 @@ import android.app.Service
 import android.bluetooth.*
 import android.content.Intent
 import android.os.Binder
-import android.os.Build
 import android.os.IBinder
 import android.util.Log
 import java.util.*
@@ -88,7 +87,9 @@ class BluetoothLeService : Service() {
 
     @SuppressLint("MissingPermission")
     private val mGattCallback: BluetoothGattCallback = object : BluetoothGattCallback() {
+
         override fun onConnectionStateChange(gatt: BluetoothGatt, status: Int, newState: Int) {
+
             if (newState == BluetoothProfile.STATE_CONNECTED) {
                 broadcastUpdate(ACTION_GATT_CONNECTED, gatt.device.address)
                 Log.i("BluetoothLeService", "Connected to GATT server.")
@@ -102,7 +103,14 @@ class BluetoothLeService : Service() {
 
         override fun onServicesDiscovered(gatt: BluetoothGatt, status: Int) {
             if (status == BluetoothGatt.GATT_SUCCESS) {
-                broadcastUpdate(ACTION_GATT_SERVICES_DISCOVERED)
+                val gattServices = gatt.services
+                var uuidServiceList = mutableListOf<String>()
+                for (gattService in gattServices) {
+                    val serviceUuid = gattService.uuid
+                    Log.i("BluetoothLeService", "service: $serviceUuid")
+                    uuidServiceList.add(serviceUuid.toString())
+                }
+                broadcastUpdate(ACTION_GATT_SERVICES_DISCOVERED, gatt.device.address, uuidServiceList)
             } else {
                 Log.e("BluetoothLeService", "onServicesDiscovered received : $status")
             }
@@ -153,6 +161,13 @@ class BluetoothLeService : Service() {
     private fun broadcastUpdate(action: String, address: String?) {
         val intent = Intent(action)
         intent.putExtra(EXTRA_DEVICE_ADDRESS, address)
+        sendBroadcast(intent)
+    }
+
+    private fun broadcastUpdate(action: String, address: String?, uuidService: List<String>?) {
+        val intent = Intent(action)
+        intent.putExtra(EXTRA_DEVICE_ADDRESS, address)
+        intent.putExtra(EXTRA_DEVICE_SERVICE_UUID, uuidService?.toTypedArray())
         sendBroadcast(intent)
     }
 
@@ -211,6 +226,7 @@ class BluetoothLeService : Service() {
         const val ACTION_DATA_AVAILABLE = "action_data_available"
         const val EXTRA_DATA = "extra_data"
         const val EXTRA_DEVICE_ADDRESS = "extra_device_address"
+        const val EXTRA_DEVICE_SERVICE_UUID = "extra_service_uuid"
         val UUID_NOTIFY = UUID.fromString("beb5483e-36e1-4688-b7f5-ea07361b26a8")
     }
 }
