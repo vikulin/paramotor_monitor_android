@@ -407,7 +407,7 @@ class MainActivity : AppCompatActivity(), OnBluetoothDeviceClickedListener {
 
     fun contains(device: BluetoothDevice?): Boolean {
         for (bluetoothDeviceData in mBluetoothDeviceList) {
-            if (bluetoothDeviceData.mBluetoothDevice!!.address.equals(device!!.address)) {
+            if (bluetoothDeviceData.mBluetoothDevice!!.address.equals(device!!.address, ignoreCase = true)) {
                 return true
             }
         }
@@ -415,7 +415,7 @@ class MainActivity : AppCompatActivity(), OnBluetoothDeviceClickedListener {
     }
 
     fun setStatusConnected(address: String, status: Boolean) {
-        mBluetoothDeviceList.firstOrNull { it.mBluetoothDevice!!.address.equals(address) }?.isConnected = status
+        mBluetoothDeviceList.firstOrNull { it.mBluetoothDevice!!.address.equals(address, ignoreCase = true) }?.isConnected = status
     }
 
     fun setData(address: String, data: String) {
@@ -423,7 +423,7 @@ class MainActivity : AppCompatActivity(), OnBluetoothDeviceClickedListener {
         var sensorData  = data.split("|")
         newData.rpm = Integer.parseInt(sensorData[0])
         newData.temp = Integer.parseInt(sensorData[1])
-        mBluetoothDeviceList.firstOrNull { it.mBluetoothDevice!!.address.equals(address) }?.deviceData = newData
+        mBluetoothDeviceList.firstOrNull { it.mBluetoothDevice!!.address.equals(address, ignoreCase = true) }?.deviceData = newData
     }
 
     @Deprecated("Deprecated in Java")

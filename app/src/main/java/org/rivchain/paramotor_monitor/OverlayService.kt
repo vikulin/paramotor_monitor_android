@@ -141,7 +141,7 @@ class OverlayService : Service() {
         var sensorData  = data.split("|")
         newData.rpm = Integer.parseInt(sensorData[0])
         newData.temp = Integer.parseInt(sensorData[1])
-        mBluetoothDeviceList.firstOrNull { it.mBluetoothDevice!!.address.equals(address) }?.deviceData = newData
+        mBluetoothDeviceList.firstOrNull { it.mBluetoothDevice!!.address.equals(address, ignoreCase = true) }?.deviceData = newData
     }
 
     fun addDevice(device: BluetoothDeviceData){
@@ -152,9 +152,9 @@ class OverlayService : Service() {
         }
     }
 
-    fun indexOf(device: BluetoothDevice?): Int {
+    private fun indexOf(device: BluetoothDevice?): Int {
         for ((i, bluetoothDeviceData) in mBluetoothDeviceList.withIndex()) {
-            if (bluetoothDeviceData.mBluetoothDevice!!.address.equals(device!!.address)) {
+            if (bluetoothDeviceData.mBluetoothDevice!!.address.equals(device!!.address, ignoreCase = true)) {
                 return i
             }
         }
