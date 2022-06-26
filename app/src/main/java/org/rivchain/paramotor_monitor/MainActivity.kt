@@ -124,6 +124,7 @@ class MainActivity : AppCompatActivity(), OnBluetoothDeviceClickedListener {
         super.onPause()
         Log.i("MainActivity", "unregisterReceiver()")
         unregisterReceiver(mGattUpdateReceiver)
+        mOverlayService?.show()
     }
 
     private fun requestPermissions() {
@@ -301,7 +302,6 @@ class MainActivity : AppCompatActivity(), OnBluetoothDeviceClickedListener {
                             db.addDeviceInfo(it)
                             Database.store(db, this@MainActivity)
                         }
-                    mOverlayService?.show()
                     mOverlayService?.addDevice(d)
                     mOverlayService?.notifyDataSetChanged()
                     //findViewById<View>(R.id.root).rootView.visibility = View.GONE
