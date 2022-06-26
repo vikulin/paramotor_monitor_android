@@ -73,7 +73,7 @@ class OverlayService : Service() {
             WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE,
             PixelFormat.TRANSLUCENT
         )
-        deviceListView = topView!!.findViewById(R.id.recycler_view)
+        deviceListView = topView!!.findViewById(R.id.top)
         val layoutManager = GridLayoutManager(this, 1)
         deviceListView!!.layoutManager = layoutManager
         mConnectedDeviceAdapter = BluetoothDeviceAdapter(mBluetoothDeviceList,
