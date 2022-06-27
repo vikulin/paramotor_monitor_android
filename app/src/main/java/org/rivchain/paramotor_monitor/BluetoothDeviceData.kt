@@ -16,22 +16,26 @@ class BluetoothDeviceData {
         var sensorId = listOf(
             "459e",//RPM
             "2a1c",//tc
-            "8fcc"//fl
+            "8fcc",//fl
+            "ed11"//eh
         )
         var label = listOf(
             "RPM",//RPM
             "°C",//tc
-            "%"//fl
+            "%",//fl
+            "h"//eh
         )
         var icon = listOf(
             "RPM",//RPM
             "tc_256x256",//tc
-            "%"//fl
+            "%",//fl
+            "h",//eh
         )
         var descryption = linkedSetOf(
             "rotations per minute",//RPM
             "temperature in °C",//tc
-            "fuel level in %"//fl
+            "fuel level in %",//fl
+            "engine hours"//eh
         )
     }
 }
