@@ -9,6 +9,11 @@ import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.rivchain.paramotor_monitor.R
 import java.lang.Double
+import kotlin.Any
+import kotlin.Array
+import kotlin.IllegalArgumentException
+import kotlin.Int
+import kotlin.Number
 
 /**
  * Created by Vadym Vikulin
@@ -28,25 +33,24 @@ class SensorDataAdapter(
     @SuppressLint("MissingPermission")
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         val data = mSensorData[position]
-        var profile = BluetoothDeviceData.sensorProfile[mSensorId[position]]
+        val profile = BluetoothDeviceData.sensorProfile[mSensorId[position]]
         //exponent
         holder.data.text = cast(data, profile).toString()
         holder.data_label.text = profile[2].toString()
     }
 
     private fun cast(value: Any, profile: Array<Any>): Number {
-        // map lookup removed for simplicity
         return when (profile[1]) {
-            Int -> (Double.valueOf(value.toString())/Integer.parseInt(profile[5].toString())).toInt()
+            Int -> (Double.valueOf(value.toString()) / Integer.parseInt(profile[5].toString())).toInt()
             else -> throw IllegalArgumentException("Unsupported Cast")
         }
     }
 
-    fun updateAvailableSensors(availableSensors: Set<Int>){
+    fun updateAvailableSensors(availableSensors: Set<Int>) {
         mSensorId = availableSensors.toMutableList()
     }
 
-    fun updateSensorData(sensorData: Array<Any>){
+    fun updateSensorData(sensorData: Array<Any>) {
         mSensorData = sensorData.toMutableList()
     }
 

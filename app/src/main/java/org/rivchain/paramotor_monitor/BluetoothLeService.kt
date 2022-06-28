@@ -110,7 +110,11 @@ class BluetoothLeService : Service() {
                     Log.i("BluetoothLeService", "service: $serviceUuid")
                     uuidServiceList.add(serviceUuid.toString())
                 }
-                broadcastUpdate(ACTION_GATT_SERVICES_DISCOVERED, gatt.device.address, uuidServiceList)
+                broadcastUpdate(
+                    ACTION_GATT_SERVICES_DISCOVERED,
+                    gatt.device.address,
+                    uuidServiceList
+                )
             } else {
                 Log.e("BluetoothLeService", "onServicesDiscovered received : $status")
             }

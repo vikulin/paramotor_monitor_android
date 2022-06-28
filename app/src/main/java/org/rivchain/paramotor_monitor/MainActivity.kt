@@ -26,7 +26,6 @@ import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import com.google.gson.Gson
 import com.rivchain.paramotor_monitor.R
 import org.rivchain.paramotor_monitor.db.Database
-import java.lang.NumberFormatException
 
 class MainActivity : AppCompatActivity(), OnBluetoothDeviceClickedListener {
 
@@ -72,8 +71,8 @@ class MainActivity : AppCompatActivity(), OnBluetoothDeviceClickedListener {
         val bluetoothManager = getSystemService(BLUETOOTH_SERVICE) as BluetoothManager
         val connectedDevices =
             bluetoothManager.getConnectedDevices(BluetoothProfile.GATT_SERVER)
-        if(connectedDevices.size > 0){
-            for(cd in connectedDevices) {
+        if (connectedDevices.size > 0) {
+            for (cd in connectedDevices) {
                 if (!contains(cd)) {
                     val bluetoothDeviceData = BluetoothDeviceData()
                     bluetoothDeviceData.mBluetoothDevice = cd
@@ -110,9 +109,19 @@ class MainActivity : AppCompatActivity(), OnBluetoothDeviceClickedListener {
             //changeStatus(true)
             //finish()
         }
-        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.BLUETOOTH_CONNECT) != PackageManager.PERMISSION_GRANTED ||
-            ActivityCompat.checkSelfPermission(this, Manifest.permission.BLUETOOTH_SCAN) != PackageManager.PERMISSION_GRANTED ||
-            ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+        if (ActivityCompat.checkSelfPermission(
+                this,
+                Manifest.permission.BLUETOOTH_CONNECT
+            ) != PackageManager.PERMISSION_GRANTED ||
+            ActivityCompat.checkSelfPermission(
+                this,
+                Manifest.permission.BLUETOOTH_SCAN
+            ) != PackageManager.PERMISSION_GRANTED ||
+            ActivityCompat.checkSelfPermission(
+                this,
+                Manifest.permission.ACCESS_FINE_LOCATION
+            ) != PackageManager.PERMISSION_GRANTED
+        ) {
             this.requestPermissions()
             return
         }
@@ -134,7 +143,8 @@ class MainActivity : AppCompatActivity(), OnBluetoothDeviceClickedListener {
                     arrayOf(
                         Manifest.permission.BLUETOOTH_SCAN,
                         Manifest.permission.BLUETOOTH_CONNECT,
-                        Manifest.permission.ACCESS_FINE_LOCATION),
+                        Manifest.permission.ACCESS_FINE_LOCATION
+                    ),
                     PERMISSIONS_REQUEST
                 )
             }
@@ -196,7 +206,8 @@ class MainActivity : AppCompatActivity(), OnBluetoothDeviceClickedListener {
                     WindowManager.LayoutParams.FLAG_LAYOUT_INSET_DECOR or
                     WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS)
             params.flags = params.flags or WindowManager.LayoutParams.FLAG_FULLSCREEN
-            view.systemUiVisibility = View.SYSTEM_UI_FLAG_LAYOUT_STABLE or View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN or View.SYSTEM_UI_FLAG_FULLSCREEN
+            view.systemUiVisibility =
+                View.SYSTEM_UI_FLAG_LAYOUT_STABLE or View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN or View.SYSTEM_UI_FLAG_FULLSCREEN
             window.attributes = params
         }
     }
@@ -223,7 +234,8 @@ class MainActivity : AppCompatActivity(), OnBluetoothDeviceClickedListener {
         recyclerView!!.adapter = mBluetoothDeviceAdapter
         swipeRefresh!!.setOnRefreshListener {
             //scan result does not return connected devices. save connected in list
-            var connectedDeviceList = mBluetoothDeviceList.filter { key: BluetoothDeviceData -> key.isConnected } as MutableList<BluetoothDeviceData>
+            var connectedDeviceList =
+                mBluetoothDeviceList.filter { key: BluetoothDeviceData -> key.isConnected } as MutableList<BluetoothDeviceData>
             connectedDeviceList.sortBy { it.mBluetoothDevice?.name }
             mBluetoothDeviceList.clear()
             mBluetoothDeviceList.addAll(connectedDeviceList)
@@ -293,15 +305,16 @@ class MainActivity : AppCompatActivity(), OnBluetoothDeviceClickedListener {
                 mConnectionState = BluetoothLeService.ACTION_GATT_CONNECTED
                 swipeRefresh!!.isRefreshing = false
                 //inputMessage()
-                var d = mBluetoothDeviceList.firstOrNull { it.mBluetoothDevice!!.address.equals(address) }
-                if(d != null && address != null) {
+                var d =
+                    mBluetoothDeviceList.firstOrNull { it.mBluetoothDevice!!.address.equals(address) }
+                if (d != null && address != null) {
                     setStatusConnected(address, true)
                     mBluetoothDeviceAdapter?.notifyDataSetChanged()
                     var db = Database.load(this@MainActivity)
                     d.mBluetoothDevice?.let {
-                            db.addDeviceInfo(it)
-                            Database.store(db, this@MainActivity)
-                        }
+                        db.addDeviceInfo(it)
+                        Database.store(db, this@MainActivity)
+                    }
                     mOverlayService?.addDevice(d)
                     mOverlayService?.notifyDataSetChanged()
                     //findViewById<View>(R.id.root).rootView.visibility = View.GONE
@@ -322,18 +335,19 @@ class MainActivity : AppCompatActivity(), OnBluetoothDeviceClickedListener {
             } else if (BluetoothLeService.ACTION_GATT_SERVICES_DISCOVERED == action) {
                 mBluetoothLeService!!.supportedGattServices
                 val address = intent.getStringExtra(BluetoothLeService.EXTRA_DEVICE_ADDRESS)
-                val serviceUuid = intent.getStringArrayExtra(BluetoothLeService.EXTRA_DEVICE_SERVICE_UUID)
+                val serviceUuid =
+                    intent.getStringArrayExtra(BluetoothLeService.EXTRA_DEVICE_SERVICE_UUID)
                 //update serviceUuid to available sensor list
-                if(address != null && serviceUuid!!.isNotEmpty()){
-                    var sensors =  LinkedHashSet<String>()
-                    for(uuid in serviceUuid){
-                        val u = uuid.replace("-","",ignoreCase = true)
+                if (address != null && serviceUuid!!.isNotEmpty()) {
+                    var sensors = LinkedHashSet<String>()
+                    for (uuid in serviceUuid) {
+                        val u = uuid.replace("-", "", ignoreCase = true)
                         var sensorIdList = u.chunked(4)
                         sensors.addAll(sensorIdList)
                     }
                     var availableSensorId = linkedSetOf<Int>()
-                    for((index, sensorId) in BluetoothDeviceData.sensorProfile.withIndex()){
-                        if(sensors.indexOf(sensorId[0])>=0){
+                    for ((index, sensorId) in BluetoothDeviceData.sensorProfile.withIndex()) {
+                        if (sensors.indexOf(sensorId[0]) >= 0) {
                             availableSensorId.add(index)
                         }
                     }
@@ -350,12 +364,12 @@ class MainActivity : AppCompatActivity(), OnBluetoothDeviceClickedListener {
                         stringBuilder.append(b)
                     }
                     Log.i("MainActivity", "Get string : $stringBuilder")
-                    if(mBluetoothDeviceList.size > 0) {
+                    if (mBluetoothDeviceList.size > 0) {
                         try {
                             setData(address, stringBuilder.toString())
                             mBluetoothDeviceAdapter?.notifyDataSetChanged()
                             mOverlayService?.notifyDataSetChanged()
-                        } catch (e: NumberFormatException){
+                        } catch (e: NumberFormatException) {
                             e.printStackTrace()
                         }
                     }
@@ -416,7 +430,7 @@ class MainActivity : AppCompatActivity(), OnBluetoothDeviceClickedListener {
         @SuppressLint("MissingPermission")
         override fun onLeScanResult(device: BluetoothDevice?, rssi: Int, scanRecord: ByteArray?) {
             //CC:50:E3:B6:94:36
-            if (!contains(device) && device?.name!=null) {
+            if (!contains(device) && device?.name != null) {
                 var bluetoothDeviceData = BluetoothDeviceData()
                 bluetoothDeviceData.mBluetoothDevice = device
                 mBluetoothDeviceList.add(bluetoothDeviceData)
@@ -427,7 +441,11 @@ class MainActivity : AppCompatActivity(), OnBluetoothDeviceClickedListener {
 
     fun contains(device: BluetoothDevice?): Boolean {
         for (bluetoothDeviceData in mBluetoothDeviceList) {
-            if (bluetoothDeviceData.mBluetoothDevice!!.address.equals(device!!.address, ignoreCase = true)) {
+            if (bluetoothDeviceData.mBluetoothDevice!!.address.equals(
+                    device!!.address,
+                    ignoreCase = true
+                )
+            ) {
                 return true
             }
         }
@@ -435,20 +453,35 @@ class MainActivity : AppCompatActivity(), OnBluetoothDeviceClickedListener {
     }
 
     fun setSensorsId(address: String, availableSensorId: Set<Int>) {
-        var device = mBluetoothDeviceList.firstOrNull { it.mBluetoothDevice?.address.equals(address, ignoreCase = true) }
+        var device = mBluetoothDeviceList.firstOrNull {
+            it.mBluetoothDevice?.address.equals(
+                address,
+                ignoreCase = true
+            )
+        }
         device?.availableSensorId = availableSensorId
     }
 
     fun setStatusConnected(address: String, status: Boolean) {
-        mBluetoothDeviceList.firstOrNull { it.mBluetoothDevice!!.address.equals(address, ignoreCase = true) }?.isConnected = status
+        mBluetoothDeviceList.firstOrNull {
+            it.mBluetoothDevice!!.address.equals(
+                address,
+                ignoreCase = true
+            )
+        }?.isConnected = status
     }
 
     @SuppressLint("MissingPermission")
     fun setData(address: String, data: String) {
         //TODO replace Array<Any>::class.java to explicit class type definition
         val sensorData = gson.fromJson(data, Array<Any>::class.java)
-        var device = mBluetoothDeviceList.firstOrNull { it.mBluetoothDevice!!.address.equals(address, ignoreCase = true) }
-        if(device != null) {
+        var device = mBluetoothDeviceList.firstOrNull {
+            it.mBluetoothDevice!!.address.equals(
+                address,
+                ignoreCase = true
+            )
+        }
+        if (device != null) {
             var newData = DeviceData()
             newData.sensorData = sensorData
             device.deviceData = newData

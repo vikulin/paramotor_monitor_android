@@ -2,6 +2,6 @@ package org.rivchain.paramotor_monitor
 
 class DeviceData {
 
-    var sensorData :Any? = null
+    var sensorData: Any? = null
 
 }

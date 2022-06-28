@@ -19,7 +19,6 @@ import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.gson.Gson
 import com.rivchain.paramotor_monitor.R
-import java.lang.NumberFormatException
 
 /**
  * Created by Vadym Vikulin on 6/23/22.
@@ -89,12 +88,12 @@ class OverlayService : Service() {
         windowManager!!.addView(topView, topParams)
     }
 
-    fun show(){
-        topView?.visibility=View.VISIBLE
+    fun show() {
+        topView?.visibility = View.VISIBLE
     }
 
-    fun hide(){
-        topView?.visibility=View.GONE
+    fun hide() {
+        topView?.visibility = View.GONE
     }
 
     private fun initReceiver() {
@@ -115,7 +114,7 @@ class OverlayService : Service() {
                 Log.i("OverlayService", "ACTION_GATT_CONNECTED!!!")
             } else if (BluetoothLeService.ACTION_GATT_DISCONNECTED == action) {
                 Log.i("OverlayService", "ACTION_GATT_DISCONNECTED!!!")
-                if(mBluetoothDeviceList.size > 0) {
+                if (mBluetoothDeviceList.size > 0) {
                     mBluetoothDeviceList.removeAt(0)
                     notifyDataSetChanged()
                 }
@@ -133,11 +132,11 @@ class OverlayService : Service() {
                         stringBuilder.append(b)
                     }
                     Log.i("OverlayService", "Get string : $stringBuilder")
-                    if(mBluetoothDeviceList.size > 0) {
+                    if (mBluetoothDeviceList.size > 0) {
                         try {
                             setData(address, stringBuilder.toString())
                             notifyDataSetChanged()
-                        } catch (e: NumberFormatException){
+                        } catch (e: NumberFormatException) {
                             e.printStackTrace()
                         }
                     }
@@ -150,32 +149,42 @@ class OverlayService : Service() {
     fun setData(address: String, data: String) {
         //TODO replace Array<Any>::class.java to explicit class type definition
         val sensorData = gson.fromJson(data, Array<Any>::class.java)
-        var device = mBluetoothDeviceList.firstOrNull { it.mBluetoothDevice!!.address.equals(address, ignoreCase = true) }
-        if(device != null) {
+        var device = mBluetoothDeviceList.firstOrNull {
+            it.mBluetoothDevice!!.address.equals(
+                address,
+                ignoreCase = true
+            )
+        }
+        if (device != null) {
             var newData = DeviceData()
             newData.sensorData = sensorData
             device.deviceData = newData
         }
     }
 
-    fun addDevice(device: BluetoothDeviceData){
-        if(indexOf(device.mBluetoothDevice) < 0) {
+    fun addDevice(device: BluetoothDeviceData) {
+        if (indexOf(device.mBluetoothDevice) < 0) {
             mBluetoothDeviceList.add(0, device)
-            topParams!!.height = mBluetoothDeviceList.size * ScreenUtils.convertDpToPx(this@OverlayService, 85)
+            topParams!!.height =
+                mBluetoothDeviceList.size * ScreenUtils.convertDpToPx(this@OverlayService, 85)
             windowManager!!.updateViewLayout(topView, topParams)
         }
     }
 
     private fun indexOf(device: BluetoothDevice?): Int {
         for ((i, bluetoothDeviceData) in mBluetoothDeviceList.withIndex()) {
-            if (bluetoothDeviceData.mBluetoothDevice!!.address.equals(device!!.address, ignoreCase = true)) {
+            if (bluetoothDeviceData.mBluetoothDevice!!.address.equals(
+                    device!!.address,
+                    ignoreCase = true
+                )
+            ) {
                 return i
             }
         }
         return -1
     }
 
-    fun notifyDataSetChanged(){
+    fun notifyDataSetChanged() {
         mConnectedDeviceAdapter?.notifyDataSetChanged()
     }
 
@@ -193,12 +202,12 @@ class OverlayService : Service() {
     //TODO implement
     /**
     private fun initOnClicks() {
-        topView!!.findViewById<View>(R.id.webButton).setOnLongClickListener {
-            stopSelf()
-            true
-        }
+    topView!!.findViewById<View>(R.id.webButton).setOnLongClickListener {
+    stopSelf()
+    true
     }
-    **/
+    }
+     **/
 
     private fun initOnTouches() {
         deviceListView!!.setOnTouchListener(OnTouchListener { view, motionEvent ->

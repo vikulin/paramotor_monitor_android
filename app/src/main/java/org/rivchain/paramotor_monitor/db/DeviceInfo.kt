@@ -7,13 +7,13 @@ import org.json.JSONObject
 
 class DeviceInfo {
 
-    constructor(){
+    constructor() {
         name = null
         address = null
     }
 
     @SuppressLint("MissingPermission")
-    constructor(bluetoothDevice: BluetoothDevice){
+    constructor(bluetoothDevice: BluetoothDevice) {
         name = bluetoothDevice.name
         address = bluetoothDevice.address
     }

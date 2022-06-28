@@ -75,9 +75,9 @@ class BluetoothDeviceAdapter(
             holder.deviceName.visibility = View.VISIBLE
             holder.sensorData.visibility = View.GONE
         }
-        if(device.availableSensorId.isNotEmpty()){
+        if (device.availableSensorId.isNotEmpty()) {
             var sensorData = (device.deviceData.sensorData as Array<Any>)
-            if(sensorData.isNotEmpty()) {
+            if (sensorData.isNotEmpty()) {
                 (holder.sensorData.adapter as SensorDataAdapter).updateSensorData(sensorData)
                 (holder.sensorData.adapter as SensorDataAdapter).updateAvailableSensors(device.availableSensorId)
                 (holder.sensorData.adapter as SensorDataAdapter).notifyDataSetChanged()
@@ -100,7 +100,11 @@ class BluetoothDeviceAdapter(
             deviceImage = view.findViewById<View>(R.id.device_image) as ImageView
             deviceName = view.findViewById<View>(R.id.device_name) as TextView
             sensorData = view.findViewById<View>(R.id.sensor_data) as RecyclerView
-            sensorData.adapter = SensorDataAdapter(this@BluetoothDeviceAdapter.mContext, mutableListOf(), mutableListOf())
+            sensorData.adapter = SensorDataAdapter(
+                this@BluetoothDeviceAdapter.mContext,
+                mutableListOf(),
+                mutableListOf()
+            )
         }
     }
 
