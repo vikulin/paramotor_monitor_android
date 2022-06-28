@@ -332,8 +332,8 @@ class MainActivity : AppCompatActivity(), OnBluetoothDeviceClickedListener {
                         sensors.addAll(sensorIdList)
                     }
                     var availableSensorId = linkedSetOf<Int>()
-                    for((index, sensorId) in BluetoothDeviceData.sensorId.withIndex()){
-                        if(sensors.indexOf(sensorId)>=0){
+                    for((index, sensorId) in BluetoothDeviceData.sensorProfile.withIndex()){
+                        if(sensors.indexOf(sensorId[0])>=0){
                             availableSensorId.add(index)
                         }
                     }

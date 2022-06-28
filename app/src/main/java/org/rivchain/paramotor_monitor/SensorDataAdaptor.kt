@@ -2,14 +2,10 @@ package org.rivchain.paramotor_monitor
 
 import android.annotation.SuppressLint
 import android.content.Context
-import android.text.TextUtils
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.ImageView
 import android.widget.TextView
-import androidx.cardview.widget.CardView
 import androidx.recyclerview.widget.RecyclerView
 import com.rivchain.paramotor_monitor.R
 
@@ -32,7 +28,7 @@ class SensorDataAdapter(
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         val data = mSensorData[position]
         holder.data.text = data.toString()
-        holder.data_label.text = BluetoothDeviceData.label[mSensorId[position]]
+        holder.data_label.text = BluetoothDeviceData.sensorProfile[mSensorId[position]][1]
     }
 
     fun updateAvailableSensors(availableSensors: Set<Int>){

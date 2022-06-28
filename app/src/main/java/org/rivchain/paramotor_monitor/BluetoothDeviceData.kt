@@ -13,29 +13,11 @@ class BluetoothDeviceData {
     var availableSensorId = setOf<Int>()
 
     companion object {
-        var sensorId = listOf(
-            "459e",//RPM
-            "2a1c",//tc
-            "8fcc",//fl
-            "ed11"//eh
-        )
-        var label = listOf(
-            "RPM",//RPM
-            "°C",//tc
-            "%",//fl
-            "h"//eh
-        )
-        var icon = listOf(
-            "RPM",//RPM
-            "tc_256x256",//tc
-            "%",//fl
-            "h",//eh
-        )
-        var descryption = linkedSetOf(
-            "rotations per minute",//RPM
-            "temperature in °C",//tc
-            "fuel level in %",//fl
-            "engine hours"//eh
+        var sensorProfile = listOf(
+            arrayOf("459e", "RPM", "RPM", "rotations per minute"),//RPM
+            arrayOf("2a1c", "°C", "tc_256x256", "temperature in °C"),//tc
+            arrayOf("8fcc", "%", "%", "fuel level in %"),//fl
+            arrayOf("ed11", "h", "h", "engine hours")//eh
         )
     }
 }
