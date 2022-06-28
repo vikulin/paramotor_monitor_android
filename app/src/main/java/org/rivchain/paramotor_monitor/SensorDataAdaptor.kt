@@ -27,8 +27,10 @@ class SensorDataAdapter(
     @SuppressLint("MissingPermission")
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         val data = mSensorData[position]
-        holder.data.text = data.toString()
-        holder.data_label.text = BluetoothDeviceData.sensorProfile[mSensorId[position]][1]
+        var profile = BluetoothDeviceData.sensorProfile[mSensorId[position]]
+        //exponent
+        holder.data.text = data.div(Integer.parseInt(profile[4].toString())).toString()
+        holder.data_label.text = profile[1].toString()
     }
 
     fun updateAvailableSensors(availableSensors: Set<Int>){

@@ -14,10 +14,10 @@ class BluetoothDeviceData {
 
     companion object {
         var sensorProfile = listOf(
-            arrayOf("459e", "RPM", "RPM", "rotations per minute"),//RPM
-            arrayOf("2a1c", "°C", "tc_256x256", "temperature in °C"),//tc
-            arrayOf("8fcc", "%", "%", "fuel level in %"),//fl
-            arrayOf("ed11", "h", "h", "engine hours")//eh
+            arrayOf("459e", "RPM", "RPM", "rotations per minute", 1),//RPM
+            arrayOf("2a1c", "°C", "tc_256x256", "temperature in °C", 1),//tc
+            arrayOf("8fcc", "%", "%", "fuel level in %", 1),//fl
+            arrayOf("ed11", "h", "h", "engine hours", 3600)//eh
         )
     }
 }
