@@ -148,7 +148,8 @@ class OverlayService : Service() {
 
     @SuppressLint("MissingPermission")
     fun setData(address: String, data: String) {
-        val sensorData = gson.fromJson(data, Array<Int>::class.java)
+        //TODO replace Array<Any>::class.java to explicit class type definition
+        val sensorData = gson.fromJson(data, Array<Any>::class.java)
         var device = mBluetoothDeviceList.firstOrNull { it.mBluetoothDevice!!.address.equals(address, ignoreCase = true) }
         if(device != null) {
             var newData = DeviceData()

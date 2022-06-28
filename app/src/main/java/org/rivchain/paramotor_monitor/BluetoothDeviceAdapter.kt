@@ -76,7 +76,7 @@ class BluetoothDeviceAdapter(
             holder.sensorData.visibility = View.GONE
         }
         if(device.availableSensorId.isNotEmpty()){
-            var sensorData = (device.deviceData.sensorData as Array<Int>)
+            var sensorData = (device.deviceData.sensorData as Array<Any>)
             if(sensorData.isNotEmpty()) {
                 (holder.sensorData.adapter as SensorDataAdapter).updateSensorData(sensorData)
                 (holder.sensorData.adapter as SensorDataAdapter).updateAvailableSensors(device.availableSensorId)
