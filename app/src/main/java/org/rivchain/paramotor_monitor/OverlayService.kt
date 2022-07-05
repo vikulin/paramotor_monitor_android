@@ -18,6 +18,8 @@ import android.widget.RelativeLayout
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.gson.Gson
+import com.google.gson.JsonSyntaxException
+import com.google.gson.reflect.TypeToken
 import com.rivchain.paramotor_monitor.R
 
 /**
@@ -136,8 +138,9 @@ class OverlayService : Service() {
                         try {
                             setData(address, stringBuilder.toString())
                             notifyDataSetChanged()
-                        } catch (e: NumberFormatException) {
+                        } catch (e: JsonSyntaxException) {
                             e.printStackTrace()
+                            println(stringBuilder.toString())
                         }
                     }
                 }
@@ -148,18 +151,15 @@ class OverlayService : Service() {
     @SuppressLint("MissingPermission")
     fun setData(address: String, data: String) {
         //TODO replace Array<Any>::class.java to explicit class type definition
-        val sensorData = gson.fromJson(data, Array<Any>::class.java)
+        val mapType = object : TypeToken<Map<Int, Any>>() {}.type
+        val sensorData: Map<Int, Any> = gson.fromJson(data, mapType)
         var device = mBluetoothDeviceList.firstOrNull {
             it.mBluetoothDevice!!.address.equals(
                 address,
                 ignoreCase = true
             )
         }
-        if (device != null) {
-            var newData = DeviceData()
-            newData.sensorData = sensorData
-            device.deviceData = newData
-        }
+        device?.deviceData?.putAll(sensorData)
     }
 
     fun addDevice(device: BluetoothDeviceData) {

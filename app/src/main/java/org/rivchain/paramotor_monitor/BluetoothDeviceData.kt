@@ -8,12 +8,13 @@ class BluetoothDeviceData {
 
     var mBluetoothDevice: BluetoothDevice? = null
 
-    var deviceData: DeviceData = DeviceData()
+    var deviceData: HashMap<Int, Any> = HashMap()
 
     var availableSensorId = setOf<Int>()
 
     companion object {
         var sensorProfile = listOf(
+            //UUID code, data type, label, icon, description, nominator, error value
             arrayOf("459e", Int, "RPM", "RPM", "rotations per minute", 1),//RPM
             arrayOf("2a1c", Int, "°C", "tc_256x256", "temperature in °C", 1),//tc
             arrayOf("8fcc", Int, "%", "%", "fuel level in %", 1),//fl

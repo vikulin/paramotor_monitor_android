@@ -24,6 +24,8 @@ import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import com.google.gson.Gson
+import com.google.gson.JsonSyntaxException
+import com.google.gson.reflect.TypeToken
 import com.rivchain.paramotor_monitor.R
 import org.rivchain.paramotor_monitor.db.Database
 
@@ -77,7 +79,7 @@ class MainActivity : AppCompatActivity(), OnBluetoothDeviceClickedListener {
                     val bluetoothDeviceData = BluetoothDeviceData()
                     bluetoothDeviceData.mBluetoothDevice = cd
                     bluetoothDeviceData.isConnected = true
-                    bluetoothDeviceData.deviceData = DeviceData()
+                    //bluetoothDeviceData.deviceData = DeviceData()
                     mBluetoothDeviceList.add(bluetoothDeviceData)
                 }
             }
@@ -369,8 +371,9 @@ class MainActivity : AppCompatActivity(), OnBluetoothDeviceClickedListener {
                             setData(address, stringBuilder.toString())
                             mBluetoothDeviceAdapter?.notifyDataSetChanged()
                             mOverlayService?.notifyDataSetChanged()
-                        } catch (e: NumberFormatException) {
+                        } catch (e: JsonSyntaxException) {
                             e.printStackTrace()
+                            println(stringBuilder.toString())
                         }
                     }
                 }
@@ -474,18 +477,15 @@ class MainActivity : AppCompatActivity(), OnBluetoothDeviceClickedListener {
     @SuppressLint("MissingPermission")
     fun setData(address: String, data: String) {
         //TODO replace Array<Any>::class.java to explicit class type definition
-        val sensorData = gson.fromJson(data, Array<Any>::class.java)
+        val mapType = object : TypeToken<Map<Int, Any>>() {}.type
+        val sensorData: Map<Int, Any> = gson.fromJson(data, mapType)
         var device = mBluetoothDeviceList.firstOrNull {
             it.mBluetoothDevice!!.address.equals(
                 address,
                 ignoreCase = true
             )
         }
-        if (device != null) {
-            var newData = DeviceData()
-            newData.sensorData = sensorData
-            device.deviceData = newData
-        }
+        device?.deviceData?.putAll(sensorData)
     }
 
     @Deprecated("Deprecated in Java")

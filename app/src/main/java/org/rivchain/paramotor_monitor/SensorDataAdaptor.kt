@@ -36,10 +36,13 @@ class SensorDataAdapter(
         val profile = BluetoothDeviceData.sensorProfile[mSensorId[position]]
         //exponent
         holder.data.text = cast(data, profile).toString()
-        holder.data_label.text = profile[2].toString()
+        holder.dataLabel.text = profile[2].toString()
     }
 
-    private fun cast(value: Any, profile: Array<Any>): Number {
+    private fun cast(value: Any, profile: Array<Any>): Any {
+        if(value == null){
+            return "E"
+        }
         return when (profile[1]) {
             Int -> (Double.valueOf(value.toString()) / Integer.parseInt(profile[5].toString())).toInt()
             else -> throw IllegalArgumentException("Unsupported Cast")
@@ -48,10 +51,15 @@ class SensorDataAdapter(
 
     fun updateAvailableSensors(availableSensors: Set<Int>) {
         mSensorId = availableSensors.toMutableList()
+        if(mSensorData.size == 0){
+            mSensorData = arrayOfNulls<Any>(availableSensors.size).toMutableList() as MutableList<Any>
+        }
     }
 
-    fun updateSensorData(sensorData: Array<Any>) {
-        mSensorData = sensorData.toMutableList()
+    fun updateSensorData(sensorData: Map<Int, Any>) {
+        for (s in sensorData) {
+            mSensorData[s.key] = s.value
+        }
     }
 
     override fun getItemCount(): Int {
@@ -60,11 +68,11 @@ class SensorDataAdapter(
 
     class ViewHolder(view: View) : RecyclerView.ViewHolder(view) {
         var data: TextView
-        var data_label: TextView
+        var dataLabel: TextView
 
         init {
             data = view.findViewById<View>(R.id.data) as TextView
-            data_label = view.findViewById<View>(R.id.data_label) as TextView
+            dataLabel = view.findViewById<View>(R.id.data_label) as TextView
         }
     }
 }
