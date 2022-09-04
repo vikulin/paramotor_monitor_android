@@ -65,6 +65,11 @@ class BluetoothLeService : Service() {
         mBluetoothGatt = device.connectGatt(this, false, mGattCallback)
         Log.w("BluetoothLeService", "Trying to create a new connection.")
         mBluetoothDeviceAddress = address
+        /**
+         * fix for BluetoothLeService.ACTION_GATT_SERVICES_DISCOVERED is never called in MainActivity.java
+         * see https://stackoverflow.com/questions/25848764/onservicesdiscoveredbluetoothgatt-gatt-int-status-is-never-called
+         */
+        mBluetoothGatt?.connect()
         return true
     }
 
