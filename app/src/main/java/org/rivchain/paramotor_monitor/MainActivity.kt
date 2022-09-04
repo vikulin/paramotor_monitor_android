@@ -13,8 +13,6 @@ import android.os.*
 import android.provider.Settings
 import android.text.InputType
 import android.util.Log
-import android.view.View
-import android.view.WindowManager
 import android.widget.EditText
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
@@ -55,10 +53,21 @@ class MainActivity : AppCompatActivity(), OnBluetoothDeviceClickedListener {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        //init()
+    }
+
+    private fun init(){
         setContentView(R.layout.activity_main)
         initView()
         initData()
         initService()
+        initReceiver()
+    }
+
+    private fun initView() {
+        recyclerView = findViewById(R.id.recycler_view)
+        swipeRefresh = findViewById(R.id.swipe_refresh)
+        //hideActionBar(recyclerView)
     }
 
     override fun onSaveInstanceState(outState: Bundle) {
@@ -89,7 +98,7 @@ class MainActivity : AppCompatActivity(), OnBluetoothDeviceClickedListener {
 
     override fun onResume() {
         super.onResume()
-        initReceiver()
+
         //Toast.makeText(this@MainActivity, "Permission Granted!", Toast.LENGTH_SHORT).show()
         //check overlay permissions
 
@@ -108,6 +117,7 @@ class MainActivity : AppCompatActivity(), OnBluetoothDeviceClickedListener {
             )
             startActivityForResult(intent, CODE_DRAW_OVER_OTHER_APP_PERMISSION)
         } else {
+            init()
             //changeStatus(true)
             //finish()
         }
@@ -176,6 +186,7 @@ class MainActivity : AppCompatActivity(), OnBluetoothDeviceClickedListener {
                     )
                     startActivityForResult(intent, CODE_DRAW_OVER_OTHER_APP_PERMISSION)
                 } else {
+                    init()
                     changeStatus(true)
                     //finish()
                 }
@@ -195,12 +206,7 @@ class MainActivity : AppCompatActivity(), OnBluetoothDeviceClickedListener {
         }
     }
 
-    private fun initView() {
-        recyclerView = findViewById(R.id.recycler_view)
-        swipeRefresh = findViewById(R.id.swipe_refresh)
-        hideActionBar(recyclerView)
-    }
-
+    /*
     fun hideActionBar(view: View?) {
         if (view != null) {
             val params: WindowManager.LayoutParams = window.attributes
@@ -213,6 +219,7 @@ class MainActivity : AppCompatActivity(), OnBluetoothDeviceClickedListener {
             window.attributes = params
         }
     }
+     */
 
     private fun initService() {
         Log.i("MainActivity", "initService()")
@@ -301,8 +308,8 @@ class MainActivity : AppCompatActivity(), OnBluetoothDeviceClickedListener {
         override fun onReceive(c: Context, intent: Intent) {
             val action = intent.action
             if (BluetoothLeService.ACTION_GATT_CONNECTED == action) {
-                val address = intent.getStringExtra(BluetoothLeService.EXTRA_DEVICE_ADDRESS)
                 Log.i("MainActivity", "ACTION_GATT_CONNECTED!!!")
+                val address = intent.getStringExtra(BluetoothLeService.EXTRA_DEVICE_ADDRESS)
                 showMsg("Connected device $address")
                 mConnectionState = BluetoothLeService.ACTION_GATT_CONNECTED
                 swipeRefresh!!.isRefreshing = false
@@ -320,12 +327,12 @@ class MainActivity : AppCompatActivity(), OnBluetoothDeviceClickedListener {
                     mOverlayService?.addDevice(d)
                     mOverlayService?.notifyDataSetChanged()
                     //findViewById<View>(R.id.root).rootView.visibility = View.GONE
-                    Thread.sleep(1000);
+                    Thread.sleep(1000)
                     startActivity(Intent(Intent.ACTION_MAIN).addCategory(Intent.CATEGORY_HOME))
                 }
             } else if (BluetoothLeService.ACTION_GATT_DISCONNECTED == action) {
-                val address = intent.getStringExtra(BluetoothLeService.EXTRA_DEVICE_ADDRESS)
                 Log.i("MainActivity", "ACTION_GATT_DISCONNECTED!!!")
+                val address = intent.getStringExtra(BluetoothLeService.EXTRA_DEVICE_ADDRESS)
                 showMsg("Disconnected device $address")
                 mConnectionState = BluetoothLeService.ACTION_GATT_DISCONNECTED
                 swipeRefresh!!.isRefreshing = false
@@ -335,6 +342,7 @@ class MainActivity : AppCompatActivity(), OnBluetoothDeviceClickedListener {
                     mOverlayService?.notifyDataSetChanged()
                 }
             } else if (BluetoothLeService.ACTION_GATT_SERVICES_DISCOVERED == action) {
+                Log.i("MainActivity", "ACTION_GATT_SERVICES_DISCOVERED!!!")
                 mBluetoothLeService!!.supportedGattServices
                 val address = intent.getStringExtra(BluetoothLeService.EXTRA_DEVICE_ADDRESS)
                 val serviceUuid =
@@ -356,6 +364,7 @@ class MainActivity : AppCompatActivity(), OnBluetoothDeviceClickedListener {
                     setSensorsId(address, availableSensorId)
                 }
             } else if (BluetoothLeService.ACTION_DATA_AVAILABLE == action) {
+                Log.i("MainActivity", "ACTION_DATA_AVAILABLE!!!")
                 val data = intent.getByteArrayExtra(BluetoothLeService.EXTRA_DATA)
                 val address = intent.getStringExtra(BluetoothLeService.EXTRA_DEVICE_ADDRESS)
                 //showMsg("Got string : " + data?.let { String(it) })
@@ -508,6 +517,7 @@ class MainActivity : AppCompatActivity(), OnBluetoothDeviceClickedListener {
                     true
                 }
             ) {
+                init()
                 changeStatus(true)
                 //finish()
             } else { //Permission is not available
