@@ -97,8 +97,8 @@ class BluetoothLeService : Service() {
 
             if (newState == BluetoothProfile.STATE_CONNECTED) {
                 broadcastUpdate(ACTION_GATT_CONNECTED, gatt.device.address)
+                mBluetoothGatt?.discoverServices()
                 Log.i("BluetoothLeService", "Connected to GATT server.")
-                mBluetoothGatt!!.discoverServices()
                 Log.i("BluetoothLeService", "Attempting to start service discovery:")
             } else if (newState == BluetoothProfile.STATE_DISCONNECTED) {
                 broadcastUpdate(ACTION_GATT_DISCONNECTED, gatt.device.address)
@@ -111,9 +111,9 @@ class BluetoothLeService : Service() {
                 val gattServices = gatt.services
                 var uuidServiceList = mutableListOf<String>()
                 for (gattService in gattServices) {
-                    val serviceUuid = gattService.uuid
+                    val serviceUuid = gattService.uuid.toString().decapitalize()
+                    uuidServiceList.add(serviceUuid)
                     Log.i("BluetoothLeService", "service: $serviceUuid")
-                    uuidServiceList.add(serviceUuid.toString())
                 }
                 broadcastUpdate(
                     ACTION_GATT_SERVICES_DISCOVERED,
