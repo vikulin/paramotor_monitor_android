@@ -13,8 +13,8 @@ android {
         applicationId "org.rivchain.paramotor_monitor"
         minSdkVersion 18
         targetSdkVersion 33
-        versionCode 7
-        versionName "0.2.0.5"
+        versionCode 8
+        versionName "0.2.0.6"
         testInstrumentationRunner 'androidx.test.runner.AndroidJUnitRunner'
         setProperty("archivesBaseName", project.getParent().name + "-" + versionName)
         multiDexEnabled true
