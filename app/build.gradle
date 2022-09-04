@@ -8,11 +8,11 @@ def keystoreProperties = new Properties()
 keystoreProperties.load(new FileInputStream(keystorePropertiesFile))
 
 android {
-    compileSdkVersion 32
+    compileSdkVersion 33
     defaultConfig {
         applicationId "org.rivchain.paramotor_monitor"
         minSdkVersion 18
-        targetSdkVersion 32
+        targetSdkVersion 33
         versionCode 5
         versionName "0.2.0.3"
         testInstrumentationRunner 'androidx.test.runner.AndroidJUnitRunner'
@@ -44,7 +44,7 @@ dependencies {
     implementation 'ch.acra:acra-http:5.9.3'
     implementation 'ch.acra:acra-dialog:5.9.3'
     implementation 'androidx.cardview:cardview:1.0.0'
-    implementation 'androidx.appcompat:appcompat:1.4.2'
+    implementation 'androidx.appcompat:appcompat:1.5.0'
     implementation 'androidx.recyclerview:recyclerview:1.2.1'
     implementation 'com.google.android.material:material:1.6.1'
     implementation 'androidx.constraintlayout:constraintlayout:2.1.4'
