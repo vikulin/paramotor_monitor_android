@@ -78,7 +78,7 @@ class MainActivity : AppCompatActivity(), OnBluetoothDeviceClickedListener {
     @SuppressLint("MissingPermission")
     override fun onRestoreInstanceState(savedInstanceState: Bundle) {
         super.onRestoreInstanceState(savedInstanceState)
-        initData()
+        init()
         //initService()
         val bluetoothManager = getSystemService(BLUETOOTH_SERVICE) as BluetoothManager
         val connectedDevices =
